@@ -338,7 +338,7 @@ have a target always use this command!
 	e.	Type ls –lah
 	f.	Type cd msfadmin
 	g.	Type ls –a
-	h.	Use Ctrl+C to leave the ftp
+	h.	Use Ctrl+C to leave the FTP
 
 8.	Type services –u
 	a.	Type services -p 21 to see any services running on that port
@@ -365,7 +365,7 @@ along with important information.
 	b.	Type run (or exploit)
 		i.	…it found the VNC protocol version [3,  4].3…you can also see this using services
 		ii.	…it did not find it to have a blank password authentication
-iii.	…continue to identify how to get in using the data you see here and also using services -u
+		iii.	…continue to identify how to get in using the data you see here and also using services -u
 
 STEP #8: WEB APPLICATION SCANNING WITH MSFCONSOLE
 1.	Go back then type services
