@@ -5,7 +5,7 @@ Using Metasploit/Meterpreter/Nessus (Advance)
 Author: Saulo S. Ortiz
 Date: 20180602
 Updated 20180609
-~~~ IN PROGRESS BUT USABLE...LAST ENTRY: STEP #8 ~~~
+~~~ IN PROGRESS BUT USABLE ~~~
 **********************************************
 
 DISCLAIMER
