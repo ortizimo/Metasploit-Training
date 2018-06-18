@@ -420,7 +420,7 @@ STEP #8: WEB APPLICATION SCANNING WITH MSFCONSOLE
 		i.	…it displays all the vulnerabilities found
 
 
-STEP #9: SCANNING WITH NESSUS
+STEP #9: SCANNING WITH NESSUS (COMMAND LINE)
 We can connect to Nessus via the web browser or though msf console...we’ll start with the console.
 
 1.	Ctrl+L to clear then exit msf
@@ -470,7 +470,7 @@ Note: As this is a brand new Nessus installation there will be no policies avail
 
 12.	Type nessus_scan_new <UUID_#> test test <host_ip_address>
 	a.	Or type nessus_scan_new <UUID_#> test test <host_ip_range>/24
-		i.	…you’ll need the entire UUID number 
+		i.	…you’ll need the entire UUID number
 
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Take note of the Scan ID because you did not launched the scan, you just create a queue
@@ -491,10 +491,9 @@ Note: Take note of the Scan ID because you did not launched the scan, you just c
 
 17.	Type nessus_report_host_details <scan_ID> <host_ID>
 
-18.	Type nessus_scan_export 
+18.	Type nessus_scan_export
 		i.	…to see the syntax and the formats you can use to export reports from Nessus
 		ii.	Use nessus_scan_list to find the Scan ID
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Of course you can do all this via the GUI and it would be faster and easier…I just wanted to have you use the terminal screen to see it also works.
 -------------------------------------------------------------------------------------------------------------------------------
-
