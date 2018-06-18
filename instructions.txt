@@ -482,8 +482,8 @@ Note: Take note of the Scan ID because you did not launched the scan, you just c
 	a.	Type nessus_scan_list again to see if the scan completed
 		i.	…take note of the Scan ID
 
-15.	Type nessus_report_hosts <scan_ID>
-		i.	…it will show you the finding %
+15.	Type nessus_report_hosts <scan_ID> -S
+		i.	…it will show you the finding % with the found hosts
 		ii.	…take note of the Host ID
 
 16.	Type nessus_report_vulns <scan_ID>
@@ -494,6 +494,7 @@ Note: Take note of the Scan ID because you did not launched the scan, you just c
 18.	Type nessus_scan_export
 		i.	…to see the syntax and the formats you can use to export reports from Nessus
 		ii.	Use nessus_scan_list to find the Scan ID
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Of course you can do all this via the GUI and it would be faster and easier…I just wanted to have you use the terminal screen to see it also works.
 -------------------------------------------------------------------------------------------------------------------------------
