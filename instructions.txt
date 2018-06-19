@@ -484,17 +484,35 @@ Note: Take note of the Scan ID because you did not launched the scan, you just c
 
 15.	Type nessus_report_hosts <scan_ID> -S
 		i.	…it will show you the finding % with the found hosts
-		ii.	…take note of the Host ID
+		ii.	…take note of the Host ID also
 
 16.	Type nessus_report_vulns <scan_ID>
 		i.	…it will show you the vulnerabilities found
 
-17.	Type nessus_report_host_details <scan_ID> <host_ID>
-
-18.	Type nessus_scan_export
-		i.	…to see the syntax and the formats you can use to export reports from Nessus
-		ii.	Use nessus_scan_list to find the Scan ID
+17.	Let’s import the scan to metasploit…
+	a.	Type nessus_db_import <scan_ID>
+	b.	Type hosts
+	c.	Type vulns <host_ip_address>
+		i.	…it shows you the vulnerabilities for the host and if you use the browser it will show you the colorful graphic representation
+		ii.	…use the metasploitable IP address
+	d.	Use Ctrl+L to clear the screen
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: Of course you can do all this via the GUI and it would be faster and easier…I just wanted to have you use the terminal screen to see it also works.
+Note: Of course you can do all this via the GUI and it would be faster and easier…I just wanted you to use the terminal screen to see it also works.
 -------------------------------------------------------------------------------------------------------------------------------
+
+		STEP #10: HACKING TOMCAT
+		18.	Type search tomcat and select the one that reads auxiliary/scanner/http/tomcat_mgr_login
+
+		19.	Type use auxiliary/scanner/http/tomcat_mgr_login
+			a.	Type options
+			b.	Type setg rhosts <rhost_ip_address>
+				i.	…if not already set
+				c.	Type set login tomcat
+				d.	Type set password tomcat
+				e.	Type set rport 8180
+				f.	Type set_blank_passwords true
+				g.	Type run or exploit
+
+		20.	Open the browser and type the <metasploitable_ip_address>:8180
+				a.	Click on Status link
