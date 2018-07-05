@@ -809,4 +809,4 @@ Note: XP uses NT, Windows 7 and later uses NTLM
 28.	Since you now have the hash dump you can take all of them and save them with notepad++ so you can run them through rainbow tables
 
 29.	Type clearev
-a.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
+	a.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
