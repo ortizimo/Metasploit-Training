@@ -534,8 +534,8 @@ STEP #10: HACKING A TOMCAT SERVER
 STEP #11: GETTING A REVERSE SHELL/ESCALATING RIGHTS IN WINDOWS XP
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 For this exercise you will need a Windows XP to be the “victim”. You can easily find an .iso on the internet even if it’s a 30 day trial version.
-1.	Install and change your Windows VM NIC from NAT to host-only
-		i.	…a XP VM can use 1 CPU and 1GB ram
+1.	Setup the XP VM using 1 CPU and 1GB ram
+	a.	If you’re using Oracle VirtualBox setup the Video to 128MB
 
 2.	Use msfvenom tool to generate the payload…
 	a.	Type msfvenom --help-formats to view a list of formats for your payload
@@ -623,9 +623,10 @@ Note: Take a look at the SID numbers in the hash dump…what is 500 and 501? Goo
 STEP #12: GETTING A REVERSE SHELL/ESCALATING RIGHTS IN WINDOWS 7
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 For this exercise you will need a Windows 7 VM to be the “victim”. You can easily find an .iso on the internet even if it’s a 30 day trial version.
-1.	Install and change your Windows 7 VM NIC from NAT to host-only
-		i.	…A Win7 VM can use 1 CPU with 2 cores and 2GB ram, 4GB if you can spare it is best
-		ii.	…by default the screen shuts down in 10 minutes and the system in 30 minutes…find where to change this to never.
+1.	Setup the Windows 7 VM using 1 CPU with 2 cores and 2GB ram, 4GB if you can spare it is best
+	a.	If you’re using Oracle VirtualBox setup the Video to 128MB
+		i. …by default the screen shuts down in 10 minutes and the system in 30 minutes…find where to change this to never.
+
 
 2.	Use msfvenom tool to generate the payload…
 	a.	Type msfvenom --help-formats to view a list of formats for your payload
@@ -809,4 +810,4 @@ Note: XP uses NT, Windows 7 and later uses NTLM
 28.	Since you now have the hash dump you can take all of them and save them with notepad++ so you can run them through rainbow tables
 
 29.	Type clearev
-	a.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
+		i.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
