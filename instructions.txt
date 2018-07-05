@@ -12,6 +12,7 @@ DISCLAIMER
 2.	As always, I am not responsible for any issues/damages to hardware or software by using any of the software mentioned in this guide nor by following it…do so at your own risk. I have tested these steps myself and found no issues/damage to my own systems. Also I am not responsible for software links, software availability or condition.
 
 3.	You will need to have some common Linux knowledge to be able to follow this guide, like what an .iso file is, installing and configuring your Linux distro in a VM as well as basic VM knowledge. I will not be covering steps in deep detail. This guide is NOT for people that have no idea how to install, remove, update/upgrade, and configure Linux/Windows OS or VMs.
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: If you don’t save the state of the VMs you will need to go through the process of starting the database service then, any other services where you left off
 -------------------------------------------------------------------------------------------------------------------------------
