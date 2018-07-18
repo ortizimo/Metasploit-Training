@@ -3,7 +3,7 @@ Straightforward Training™
 Using Metasploit/Meterpreter (Advance)
 Author: Saulo S. Ortiz
 Date: 20180602
-Updated 20180710
+Updated 20180718
 **********************************************
 
 DISCLAIMER
